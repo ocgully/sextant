@@ -1,15 +1,27 @@
 """sextant CLI — argparse dispatcher.
 
 Phase 1A commands:
-  sextant diff <ref1> <ref2> [files...]
+  sextant diff <ref1> <ref2> [files...] [--llm]
   sextant explain <commit>
   sextant check <path>
   sextant cache {clear|stats}
   sextant config {get|set|list}
   sextant register-git-driver [--scope user|repo]
 
-Deferred (phases 1B-1E):
-  sextant web / conflict / export-to-hopewell / discuss / etc.
+Phase 1D commands (when 1D is merged):
+  sextant conflict <file> [--format text|json] [--resolve]
+  sextant merge-driver <base> <ours> <theirs> <path>     (called by git)
+  sextant register-merge-driver [--scope user|repo]
+
+Phase 1E commands:
+  sextant diff ... --llm                        # refine LOW-confidence ops
+                                                # via the user's agent runner
+                                                # (no API key)
+  sextant discuss <ref1> <ref2> [--agent ...]   # build a conversation bundle
+                                                # and trigger the agent runner
+
+Deferred (phases 1B/1C):
+  sextant web / export-to-hopewell / etc.
 """
 from __future__ import annotations
 
@@ -46,6 +58,18 @@ def cmd_diff(args) -> int:
     if args.patterns:
         wanted = set(k.strip() for k in args.patterns.split(","))
         result.operations = [op for op in result.operations if op.kind.value in wanted]
+
+    # Phase 1E — residual routing tags every below-threshold op as
+    # `pending_llm`. Information-only; `--llm` is what actually invokes
+    # the agent runner.
+    from sextant.llm.residual import residual_route, run_residual
+    residual_route(result.operations)
+
+    if getattr(args, "llm", False):
+        try:
+            run_residual(result.operations, cwd=cwd)
+        except Exception as e:
+            result.warnings.append(f"residual classifier failed: {e}")
 
     # Risk enrichment
     enrich(result, cwd=cwd, mode=args.risk)
@@ -247,6 +271,60 @@ def cmd_register_git_driver(args) -> int:
 
 
 # ---------------------------------------------------------------------------
+# discuss — phase 1E: bundle + agent-runner hand-off
+# ---------------------------------------------------------------------------
+
+
+def cmd_discuss(args) -> int:
+    """Assemble a discuss bundle for `ref1..ref2` and trigger the runner.
+
+    No API key is required — Sextant talks to the user's existing agent
+    CLI as a subprocess. When no runner is on PATH, the prompt is
+    copied to the OS clipboard so the user can paste into whatever
+    agent they actually use.
+    """
+    from sextant.llm.discuss import discuss as _discuss
+
+    cwd = Path(args.cwd).resolve() if args.cwd else Path.cwd()
+    payload = _discuss(args.ref1, args.ref2,
+                       cwd=cwd,
+                       agent=args.agent,
+                       files=args.files or None)
+
+    bundle = payload["bundle"]
+    runner = payload.get("runner") or {}
+
+    if args.format == "json":
+        sys.stdout.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+        return 0
+
+    sys.stdout.write(f"bundle: {bundle['bundle_dir']}\n")
+    sys.stdout.write(f"context: {bundle['context_path']}\n")
+    sys.stdout.write(f"prompt:  {bundle['prompt_path']}\n")
+    rname = runner.get("runner") or "(none)"
+    if runner.get("invoked"):
+        sys.stdout.write(
+            f"runner:  {rname} (exit {runner.get('exit_code')})\n"
+        )
+    elif runner.get("fallback") == "clipboard":
+        sys.stdout.write(
+            f"runner:  {rname} not on PATH — prompt copied to clipboard\n"
+        )
+    elif rname == "stdout":
+        pass  # the prompt already went to stdout
+    elif rname == "mock":
+        sys.stdout.write("runner:  mock (no real LLM call)\n")
+    elif rname == "(none)":
+        msg = runner.get("error") or "no runner detected"
+        sys.stdout.write(f"runner:  none — {msg}\n")
+    else:
+        sys.stdout.write(f"runner:  {rname}\n")
+    if runner.get("error") and rname != "(none)":
+        sys.stderr.write(f"warning: {runner['error']}\n")
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # main entry point
 # ---------------------------------------------------------------------------
 
@@ -272,6 +350,11 @@ def build_parser() -> argparse.ArgumentParser:
     d.add_argument("--context", type=int, default=3)
     d.add_argument("--cwd", default=None)
     d.add_argument("--show-evidence", action="store_true")
+    d.add_argument("--llm", action="store_true",
+                   help="route LOW-confidence (residual) ops through the user's "
+                        "agent runner (no API key). Refinements land in "
+                        "evidence.llm_refinement; the deterministic kind/confidence "
+                        "are preserved.")
     d.set_defaults(func=cmd_diff)
 
     # explain
@@ -306,6 +389,38 @@ def build_parser() -> argparse.ArgumentParser:
                         help="install sextant as a git diff driver")
     rg.add_argument("--scope", choices=["user", "repo"], default="repo")
     rg.set_defaults(func=cmd_register_git_driver)
+
+    # phase 1D — conflict tooling subcommands. Wired conditionally so the
+    # 1E branch (which doesn't carry 1D's sextant/conflict/cli.py yet)
+    # still imports cleanly. Once 1D + 1E are merged, the import succeeds
+    # and the conflict commands appear automatically.
+    try:
+        from sextant.conflict.cli import add_subparsers as _add_conflict_subparsers
+        _add_conflict_subparsers(sub)
+    except ImportError:
+        pass
+
+    # phase 1E — discuss subcommand
+    di = sub.add_parser(
+        "discuss",
+        help="assemble a conversation bundle for `ref1..ref2` and trigger the "
+             "user's agent runner (claude / codex / opencode / stdout).",
+    )
+    di.add_argument("ref1", nargs="?", default="HEAD~1")
+    di.add_argument("ref2", nargs="?", default="HEAD")
+    di.add_argument("files", nargs="*")
+    di.add_argument(
+        "--agent",
+        choices=["claude", "codex", "opencode", "stdout", "mock", "clipboard"],
+        default=None,
+        help="explicit runner choice. When omitted, the env var "
+             "`SEXTANT_AGENT_RUNNER` is honoured, then PATH-detection.",
+    )
+    di.add_argument("--cwd", default=None)
+    di.add_argument("--format", choices=["text", "json"], default="text",
+                    help="output format for the runner-invocation summary "
+                         "(the bundle on disk is always the same).")
+    di.set_defaults(func=cmd_discuss)
 
     return p
 

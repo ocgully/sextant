@@ -15,9 +15,9 @@ changed; Sextant tells you what you actually did.
 - Installs as a `git diff` driver: matching files route through Sextant
   transparently.
 
-**Status**: phase 1A (HW-0056). Classifier + CLI + git-context + risk.
-Phases 1B-1E land later (merge driver, web UI, conflict tooling, LLM
-residual classifier).
+**Status**: phase 1E (HW-0056). Classifier + CLI + git-context + risk +
+LLM residual classifier + `sextant discuss` agent-session hand-off.
+Phases 1B/1C (git diff-driver wiring, web UI) land alongside.
 
 ---
 
@@ -77,6 +77,63 @@ Manage the `.sextant/cache/` directory.
 ### `sextant config {get|set|list} [key] [value]`
 
 Read or write `.sextant/config.json`.
+
+### `sextant diff ... --llm`  (phase 1E)
+
+Route LOW-confidence (residual) operations through the user's existing
+agent runner (Claude Code, Codex, OpenCode). **No API key is required**
+— Sextant invokes the runner as a subprocess; the runner uses its own
+auth.
+
+- Operations with `confidence < 0.7` are tagged `pending_llm` (visible
+  in JSON output even without `--llm`).
+- With `--llm`, each residual gets a focused prompt asking the agent
+  to confirm or correct the candidate kind.
+- The agent's verdict lands at `evidence.llm_refinement` on the op;
+  the deterministic `kind` and `confidence` are NEVER overridden.
+- Results are cached at `.sextant/cache/llm/<sha>.json` keyed by op
+  shape; same op → same cache hit, regardless of diff range.
+- Detection order: explicit `--agent`, then `SEXTANT_AGENT_RUNNER`
+  env var (`mock` for CI), then PATH probe (`claude` > `codex` >
+  `opencode`).
+
+```bash
+sextant diff HEAD~1 HEAD --llm                  # detect runner from PATH
+SEXTANT_AGENT_RUNNER=mock sextant diff HEAD~1 HEAD --llm   # tests/CI
+```
+
+### `sextant discuss <ref1> <ref2> [--agent ...]`  (phase 1E)
+
+Build a conversation bundle for the diff range and trigger the
+runner. The bundle lives at:
+
+```
+.sextant/conversations/<session-id>/
+    context.md         # human-readable narrative (ops, commits, files)
+    operations.json    # raw classifier output (round-trippable)
+    diff.patch         # raw `git diff` for the range
+    prompt.md          # seed prompt the agent reads first
+```
+
+```bash
+sextant discuss HEAD~1 HEAD                       # detect runner; invoke
+sextant discuss HEAD~1 HEAD --agent claude        # explicit
+sextant discuss HEAD~1 HEAD --agent stdout        # print prompt; no agent
+sextant discuss HEAD~1 HEAD --agent clipboard     # copy + paste
+```
+
+When no runner is detected and no fallback is forced, the prompt is
+copied to the OS clipboard via `xsel` / `pbcopy` / Windows `clip.exe`.
+
+A Claude Code skill is shipped under
+`sextant/plugin/skills/sextant-discuss/SKILL.md`. Manual install:
+
+```bash
+mkdir -p ~/.claude/skills
+cp -r sextant/plugin/skills/sextant-discuss ~/.claude/skills/
+```
+
+A future `flotilla install sextant` will wire this automatically.
 
 ### `sextant register-git-driver [--scope user|repo]`
 
