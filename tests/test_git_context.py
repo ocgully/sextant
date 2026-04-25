@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from sextant.git_context import GitContext, collect, KEYWORD_PRIORS
+from diffsextant.git_context import GitContext, collect, KEYWORD_PRIORS
 
 
 def _sh(cmd, cwd):

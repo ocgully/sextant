@@ -20,9 +20,9 @@ from typing import Any, Dict, List
 
 import pytest
 
-from sextant import classify_diff
-from sextant.git_context import collect as collect_ctx
-from sextant.risk import enrich
+from diffsextant import classify_diff
+from diffsextant.git_context import collect as collect_ctx
+from diffsextant.risk import enrich
 
 import sys as _sys
 _sys.path.insert(0, str(Path(__file__).parent))

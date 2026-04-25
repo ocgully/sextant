@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from sextant.parse import detect_language, parse_source, ts_available
+from diffsextant.parse import detect_language, parse_source, ts_available
 
 
 def test_detect_language_common_extensions():

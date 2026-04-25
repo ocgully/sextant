@@ -26,7 +26,7 @@ from typing import Any, Dict, Tuple
 
 import pytest
 
-from sextant.web import server as web_server
+from diffsextant.web import server as web_server
 from tests.conftest import init_repo
 
 

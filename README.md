@@ -1,7 +1,15 @@
-# Sextant
+# diffsextant (formerly sextant)
+
+> **Renamed from `sextant` (April 2026).** Package, CLI, and on-disk dir
+> all migrate from `sextant` / `.sextant/` to `diffsextant` /
+> `.diffsextant/`. The legacy `sextant` CLI entry point still installs
+> as a deprecation alias (prints a stderr warning, forwards to
+> `diffsextant`). The legacy `.sextant/` directory is auto-detected on
+> read; migrate in-place with `diffsextant migrate-from-sextant`.
+> Alias kept for two minor cycles.
 
 Semantic-operation diff classifier. `git diff` tells you which lines
-changed; Sextant tells you what you actually did.
+changed; diffsextant tells you what you actually did.
 
 - Renames, extracts, moves, reformats — classified deterministically
   from the AST, not guessed from line deltas.
@@ -22,6 +30,12 @@ Phases 1B/1C (git diff-driver wiring, web UI) land alongside.
 ---
 
 ## Install
+
+```bash
+pip install diffsextant
+# legacy: `pip install sextant` will continue to work for two minor
+# cycles via the deprecation-shim package on PyPI.
+```
 
 ```bash
 pip install sextant[all]          # all 5 language grammars

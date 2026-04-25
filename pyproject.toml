@@ -3,14 +3,14 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sextant"
-version = "0.5.0"
-description = "Semantic-operation diff classifier. Reads diffs as operations (rename, extract, move, reformat, ...), not line deltas. Phase 1B-1E: git diff/merge driver, web GUI, conflict tooling, LLM residual + agent-session integration (no API key)."
+name = "diffsextant"
+version = "0.6.0"
+description = "Semantic-operation diff classifier (formerly sextant). Reads diffs as operations (rename, extract, move, reformat, ...), not line deltas. Phase 1B-1E: git diff/merge driver, web GUI, conflict tooling, LLM residual + agent-session integration (no API key)."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Christopher Gulliver" }]
-keywords = ["sextant", "diff", "semantic-diff", "refactoring", "tree-sitter", "ast", "git", "classifier"]
+keywords = ["diffsextant", "sextant", "diff", "semantic-diff", "refactoring", "tree-sitter", "ast", "git", "classifier"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
@@ -52,14 +52,18 @@ Repository = "https://github.com/ocgully/sextant"
 Issues = "https://github.com/ocgully/sextant/issues"
 
 [project.scripts]
-sextant = "sextant.cli:main"
+# New primary entry point.
+diffsextant = "diffsextant.cli:main"
+# Deprecation shim — prints a stderr warning and forwards to `main`.
+# Scheduled for removal in v2.0 (kept for two minor cycles).
+sextant = "diffsextant.cli:main_deprecated_alias"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["sextant*"]
+include = ["diffsextant*"]
 
 [tool.setuptools.package-data]
-sextant = [
+diffsextant = [
   "gui/*.md",
   "conflict/*.md",
   "llm/*.md",

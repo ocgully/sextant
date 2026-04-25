@@ -19,13 +19,13 @@ from typing import Any, Dict, List
 
 import pytest
 
-from sextant.conflict import (
+from diffsextant.conflict import (
     analyze_three_blobs,
     parse_conflict_text,
     classify_region,
     suggest_for_region,
 )
-from sextant.conflict.types import ConflictKind
+from diffsextant.conflict.types import ConflictKind
 
 
 CONFLICTS_ROOT = Path(__file__).parent / "fixtures" / "conflicts"

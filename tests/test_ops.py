@@ -8,27 +8,27 @@ from __future__ import annotations
 
 import pytest
 
-from sextant.ops.base import FileChange, OperationKind
-from sextant.ops.rename import RenameSymbolClassifier
-from sextant.ops.extract import ExtractFunctionClassifier
-from sextant.ops.move import MoveFileClassifier
-from sextant.ops.reformat import ReformatClassifier, LintFixClassifier
-from sextant.ops.comment_only import CommentOnlyClassifier, DocstringOnlyClassifier
-from sextant.ops.reorder import ReorderStatementsClassifier
-from sextant.ops.invert_condition import InvertConditionClassifier
-from sextant.ops.imports import (
+from diffsextant.ops.base import FileChange, OperationKind
+from diffsextant.ops.rename import RenameSymbolClassifier
+from diffsextant.ops.extract import ExtractFunctionClassifier
+from diffsextant.ops.move import MoveFileClassifier
+from diffsextant.ops.reformat import ReformatClassifier, LintFixClassifier
+from diffsextant.ops.comment_only import CommentOnlyClassifier, DocstringOnlyClassifier
+from diffsextant.ops.reorder import ReorderStatementsClassifier
+from diffsextant.ops.invert_condition import InvertConditionClassifier
+from diffsextant.ops.imports import (
     AddImportClassifier, RemoveImportClassifier, ReorderImportsClassifier,
 )
-from sextant.ops.change_signature import ChangeSignatureClassifier
-from sextant.ops.tests import AddTestClassifier, RemoveTestClassifier
-from sextant.parse import ts_available
+from diffsextant.ops.change_signature import ChangeSignatureClassifier
+from diffsextant.ops.tests import AddTestClassifier, RemoveTestClassifier
+from diffsextant.parse import ts_available
 
 
 TS_REQUIRED = pytest.mark.skipif(not ts_available(), reason="tree-sitter not installed")
 
 
 def _change(before, after, path="lib.py"):
-    from sextant.parse import detect_language
+    from diffsextant.parse import detect_language
     return FileChange(
         path_before=path, path_after=path,
         body_before=before, body_after=after,

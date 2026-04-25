@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from sextant import git_driver as gd
+from diffsextant import git_driver as gd
 
 
 # ---------------------------------------------------------------------------
@@ -271,7 +271,7 @@ def test_cli_diff_git_driver_mode_dispatches(tmp_path):
     """The argparse layer reshapes argv: ref1=path, ref2=old-file,
     files=[old-hex, old-mode, new-file, new-hex, new-mode]. Verify the
     dispatch in cli.py wires through to git_driver."""
-    from sextant.cli import build_parser, cmd_diff
+    from diffsextant.cli import build_parser, cmd_diff
 
     old = tmp_path / "old.py"
     new = tmp_path / "new.py"

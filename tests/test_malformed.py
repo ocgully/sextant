@@ -1,8 +1,8 @@
 """Malformed-text detection (§3C)."""
 from __future__ import annotations
 
-from sextant.ops.malformed import detect, MalformedClassifier
-from sextant.ops.base import FileChange, OperationKind
+from diffsextant.ops.malformed import detect, MalformedClassifier
+from diffsextant.ops.base import FileChange, OperationKind
 
 
 def test_detect_merge_conflict_markers():

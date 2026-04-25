@@ -3,18 +3,18 @@ from __future__ import annotations
 
 import pytest
 
-from sextant.ops.base import FileChange, OperationKind
-from sextant.patterns.strategy import StrategyPatternClassifier
-from sextant.patterns.god_class import GodClassClassifier
-from sextant.patterns.shotgun_surgery import detect_shotgun_surgery
-from sextant.parse import ts_available
+from diffsextant.ops.base import FileChange, OperationKind
+from diffsextant.patterns.strategy import StrategyPatternClassifier
+from diffsextant.patterns.god_class import GodClassClassifier
+from diffsextant.patterns.shotgun_surgery import detect_shotgun_surgery
+from diffsextant.parse import ts_available
 
 
 TS_REQUIRED = pytest.mark.skipif(not ts_available(), reason="tree-sitter not installed")
 
 
 def _change(before, after, path="lib.py"):
-    from sextant.parse import detect_language
+    from diffsextant.parse import detect_language
     return FileChange(
         path_before=path, path_after=path,
         body_before=before, body_after=after,

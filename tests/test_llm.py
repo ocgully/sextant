@@ -26,8 +26,8 @@ from pathlib import Path
 
 import pytest
 
-from sextant.ops.base import Operation, OperationKind
-from sextant.llm import (
+from diffsextant.ops.base import Operation, OperationKind
+from diffsextant.llm import (
     LOW_CONFIDENCE_THRESHOLD,
     cache_key_for_op,
     cache_path_for,
@@ -37,7 +37,7 @@ from sextant.llm import (
     run_residual,
     build_discuss_bundle,
 )
-from sextant.llm.residual import build_residual_prompt
+from diffsextant.llm.residual import build_residual_prompt
 
 
 # ---------------------------------------------------------------------------
@@ -151,11 +151,14 @@ class TestCacheKey:
         b = _op(OperationKind.PLAIN_EDIT, 0.5, evidence={"reason": "y"})
         assert cache_key_for_op(a) != cache_key_for_op(b)
 
-    def test_cache_path_under_dot_sextant(self, tmp_path):
+    def test_cache_path_under_dot_diffsextant(self, tmp_path):
         op = _op(OperationKind.PLAIN_EDIT, 0.5)
         p = cache_path_for(op, cwd=tmp_path)
         rel = p.relative_to(tmp_path.resolve())
-        assert rel.parts[:3] == (".sextant", "cache", "llm")
+        # New default is .diffsextant/. Legacy .sextant/ is still
+        # auto-detected on read but the path resolver prefers the new dir
+        # for fresh writes.
+        assert rel.parts[:3] == (".diffsextant", "cache", "llm")
         assert rel.suffix == ".json"
 
 
@@ -304,7 +307,7 @@ class TestRunResidualWithMock:
 
         def spy_invoke(*args, **kwargs):
             called["n"] += 1
-            from sextant.llm.runner import invoke_runner as _real
+            from diffsextant.llm.runner import invoke_runner as _real
             return _real(*args, **kwargs)
 
         outcomes = run_residual([op2],
@@ -339,8 +342,8 @@ class TestRunResidualWithMock:
 
 class TestBuildDiscussBundle:
     def _fake_result(self):
-        from sextant.tree_delta import DiffResult
-        from sextant.git_context import GitContext
+        from diffsextant.tree_delta import DiffResult
+        from diffsextant.git_context import GitContext
         op = _op(OperationKind.RENAME_SYMBOL, 0.92,
                  file="src/auth.py", before="user_id", after="account_id")
         change = type("FakeChange", (), {
