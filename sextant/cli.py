@@ -6,9 +6,14 @@ Phase 1A commands:
   sextant check <path>
   sextant cache {clear|stats}
   sextant config {get|set|list}
-  sextant register-git-driver [--scope user|repo]
 
-Deferred (phases 1B-1E):
+Phase 1B commands:
+  sextant register-git-driver [--scope user|repo] [--uninstall]
+  sextant diff --git-driver-mode <path> <old-file> <old-hex> <old-mode>
+                                 <new-file> <new-hex> <new-mode>
+    (internal — invoked by git when sextant is registered as a diff driver)
+
+Deferred (phases 1C-1E):
   sextant web / conflict / export-to-hopewell / discuss / etc.
 """
 from __future__ import annotations
@@ -32,6 +37,19 @@ def cmd_diff(args) -> int:
     from sextant.tree_delta import classify_diff
     from sextant.risk import enrich
     from sextant.render import render_json, render_text
+
+    # Phase 1B: when invoked by git as an external diff driver, ref1/ref2
+    # carry the first two of git's 7 positional args, and `args.files`
+    # carries the remaining 5. Reshape and dispatch through git_driver.
+    if args.git_driver_mode:
+        from sextant.git_driver import GitDriverInvocation, render_driver_invocation
+        positional = [args.ref1, args.ref2, *(args.files or [])]
+        try:
+            inv = GitDriverInvocation.from_argv(positional)
+        except ValueError as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 2
+        return render_driver_invocation(inv, fmt=args.format)
 
     cwd = Path(args.cwd).resolve() if args.cwd else Path.cwd()
     ctx = collect_ctx(cwd, ref1=args.ref1, ref2=args.ref2)
@@ -185,65 +203,15 @@ def cmd_config(args) -> int:
 
 
 # ---------------------------------------------------------------------------
-# register-git-driver
+# register-git-driver  (phase 1B — see sextant/git_driver.py)
 # ---------------------------------------------------------------------------
 
 
-GITATTRIBUTES_ENTRIES = [
-    "*.py  diff=sextant",
-    "*.ts  diff=sextant",
-    "*.tsx diff=sextant",
-    "*.js  diff=sextant",
-    "*.rs  diff=sextant",
-    "*.go  diff=sextant",
-    "*.md  diff=sextant",
-]
-
-
 def cmd_register_git_driver(args) -> int:
-    import subprocess
-    cwd = Path.cwd()
-
-    # git config location
-    scope_flag = "--global" if args.scope == "user" else "--local"
-
-    # Attempt git config; if it fails (not a repo for --local), bail gracefully
-    try:
-        subprocess.run(
-            ["git", "config", scope_flag, "diff.sextant.command",
-             "sextant diff --format text"],
-            check=True, cwd=str(cwd),
-        )
-        subprocess.run(
-            ["git", "config", scope_flag, "diff.sextant.binary", "false"],
-            check=True, cwd=str(cwd),
-        )
-    except subprocess.CalledProcessError as e:
-        print(f"error: `git config` failed: {e}", file=sys.stderr)
-        return 2
-    except FileNotFoundError:
-        print("error: git not installed", file=sys.stderr)
-        return 2
-
-    # .gitattributes only for repo-scope
-    if args.scope == "repo":
-        attrs = cwd / ".gitattributes"
-        existing = ""
-        if attrs.exists():
-            existing = attrs.read_text(encoding="utf-8")
-        sentinel = "# sextant:managed"
-        if sentinel in existing:
-            sys.stdout.write("(.gitattributes already has a sextant:managed block — skipped)\n")
-        else:
-            block = (f"\n{sentinel}\n" + "\n".join(GITATTRIBUTES_ENTRIES) + "\n# sextant:/managed\n")
-            attrs.write_text(existing + block, encoding="utf-8")
-            sys.stdout.write(f"wrote sextant driver block to {attrs}\n")
-
-    sys.stdout.write(
-        f"registered `diff.sextant` in git config ({scope_flag}).\n"
-        f"git will now route matching files through `sextant diff`.\n"
-    )
-    return 0
+    from sextant.git_driver import install, uninstall
+    if args.uninstall:
+        return uninstall(scope=args.scope)
+    return install(scope=args.scope)
 
 
 # ---------------------------------------------------------------------------
@@ -272,6 +240,11 @@ def build_parser() -> argparse.ArgumentParser:
     d.add_argument("--context", type=int, default=3)
     d.add_argument("--cwd", default=None)
     d.add_argument("--show-evidence", action="store_true")
+    d.add_argument("--git-driver-mode", action="store_true",
+                   help="(internal) parse positional args as git's "
+                        "external-diff 7-tuple "
+                        "(path old-file old-hex old-mode "
+                        "new-file new-hex new-mode) instead of ref1/ref2")
     d.set_defaults(func=cmd_diff)
 
     # explain
@@ -305,6 +278,10 @@ def build_parser() -> argparse.ArgumentParser:
     rg = sub.add_parser("register-git-driver",
                         help="install sextant as a git diff driver")
     rg.add_argument("--scope", choices=["user", "repo"], default="repo")
+    rg.add_argument("--uninstall", action="store_true",
+                    help="remove a previously-installed sextant driver "
+                         "(surgical: only the sextant:managed block + "
+                         "diff.sextant.* keys are removed)")
     rg.set_defaults(func=cmd_register_git_driver)
 
     return p
