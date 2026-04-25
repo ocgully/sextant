@@ -8,8 +8,13 @@ Phase 1A commands:
   sextant config {get|set|list}
   sextant register-git-driver [--scope user|repo]
 
-Deferred (phases 1B-1E):
-  sextant web / conflict / export-to-hopewell / discuss / etc.
+Phase 1D commands:
+  sextant conflict <file> [--format text|json] [--resolve]
+  sextant merge-driver <base> <ours> <theirs> <path>     (called by git)
+  sextant register-merge-driver [--scope user|repo]
+
+Deferred (phases 1B/1C/1E):
+  sextant web / export-to-hopewell / discuss / etc.
 """
 from __future__ import annotations
 
@@ -306,6 +311,15 @@ def build_parser() -> argparse.ArgumentParser:
                         help="install sextant as a git diff driver")
     rg.add_argument("--scope", choices=["user", "repo"], default="repo")
     rg.set_defaults(func=cmd_register_git_driver)
+
+    # phase 1D — conflict tooling subcommands
+    #   sextant conflict <file>                  inspect a conflicted file
+    #   sextant merge-driver %O %A %B %P         git merge-driver entrypoint
+    #   sextant register-merge-driver [--scope]  install the git merge driver
+    # Wiring lives in sextant/conflict/cli.py so the top-level dispatcher
+    # stays the single entry point.
+    from sextant.conflict.cli import add_subparsers as _add_conflict_subparsers
+    _add_conflict_subparsers(sub)
 
     return p
 
