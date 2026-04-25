@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sextant"
-version = "0.2.0"
-description = "Semantic-operation diff classifier. Reads diffs as operations (rename, extract, move, reformat, ...), not line deltas. Phase 1B: + git diff-driver registration."
+version = "0.5.0"
+description = "Semantic-operation diff classifier. Reads diffs as operations (rename, extract, move, reformat, ...), not line deltas. Phase 1B-1E: git diff/merge driver, web GUI, conflict tooling, LLM residual + agent-session integration (no API key)."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
