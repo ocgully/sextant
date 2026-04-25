@@ -85,6 +85,38 @@ to git config and adds a `.gitattributes` block for `.py`, `.ts`,
 `.tsx`, `.js`, `.rs`, `.go`, `.md`. After this, plain `git diff` on
 those files routes through Sextant.
 
+### `sextant web [--port N] [--open] [--host H]`
+
+Launches the local web UI (Preact + esm.sh, stdlib `http.server` — no
+build step, no npm). Three switchable views:
+
+- **Operations** (default) — operations grouped by file, ordered by
+  risk; click any op for the detail pane (before/after, risk signals,
+  evidence, narrative).
+- **Classic-text** — side-by-side OR unified text-diff with a semantic
+  overlay: per-line gutter colour by operation kind, hover tooltip,
+  fold-by-operation control, sync-scrolling op list.
+- **Timeline** — horizontal track of commits across a range; per-commit
+  operation breakdown + risk bar; click to drill into the commit.
+
+```bash
+cd /path/to/repo
+sextant web --port 9881 --open
+```
+
+The view-mode (and the active commit / range) live in the URL hash, so
+deep-links + reloads are stable. Read-only — every mutation still goes
+through the CLI. The conflict resolver and AI-conversation hand-off
+land in phases 1D + 1E.
+
+Endpoints (all GET, JSON):
+
+- `/api/meta` — project root + version + HEAD + branch
+- `/api/diff/current` — classified `HEAD~1..HEAD`
+- `/api/diff?ref1=&ref2=` — explicit range
+- `/api/explain?commit=<sha>` — single commit
+- `/api/timeline?range=<a>..<b>` — per-commit summary stream
+
 ---
 
 ## What's classified (phase 1A)

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sextant</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Sextant <span id="project-root" class="muted"></span></h1>
+    <nav class="tabs" id="view-tabs">
+      <a class="tab" data-mode="ops" href="#/">Operations</a>
+      <a class="tab" data-mode="classic" href="#/classic">Classic-text</a>
+      <a class="tab" data-mode="timeline" href="#/timeline">Timeline</a>
+    </nav>
+    <div class="right">
+      <span id="range-label" class="metric muted" title="Active diff range"></span>
+      <span id="sextant-version" class="metric muted" title="Sextant version"></span>
+      <button id="refresh">Refresh</button>
+    </div>
+  </header>
+  <main id="app"></main>
+  <footer class="bottom">
+    <span class="muted" id="footer-info">read-only — mutations via the `sextant` CLI</span>
+  </footer>
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>
