@@ -1,0 +1,3 @@
+def deprecated_helper():
+    """Old helper — now returns 99."""
+    return 99

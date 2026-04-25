@@ -1,0 +1,2 @@
+def fetch(user_id):
+    return query(user_id)

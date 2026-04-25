@@ -1,0 +1,8 @@
+{
+  "kind": "concurrent-rename",
+  "min_confidence": 0.8,
+  "risk_bucket": "low",
+  "expected_intent_signals_substrings": ["account_id", "owner_id"],
+  "suggestion_keys": ["k", "u", "u-other", "a", "m"],
+  "auto_apply_required": false
+}

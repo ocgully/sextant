@@ -19,8 +19,13 @@ Phase 1C commands:
     timeline views). Stdlib http.server on a single port; no auth, no SSE.
     See sextant/web/server.py for the full route table.
 
-Deferred (phases 1D-1E):
-  sextant conflict / export-to-hopewell / discuss / etc.
+Phase 1D commands:
+  sextant conflict <file> [--format text|json] [--resolve]
+  sextant merge-driver <base> <ours> <theirs> <path>     (called by git)
+  sextant register-merge-driver [--scope user|repo]
+
+Deferred (phase 1E):
+  sextant discuss / export-to-hopewell / etc.
 """
 from __future__ import annotations
 
@@ -317,6 +322,15 @@ def build_parser() -> argparse.ArgumentParser:
     w.add_argument("--cwd", default=None,
                    help="project root (default: current working directory)")
     w.set_defaults(func=cmd_web)
+
+    # phase 1D — conflict tooling subcommands
+    #   sextant conflict <file>                  inspect a conflicted file
+    #   sextant merge-driver %O %A %B %P         git merge-driver entrypoint
+    #   sextant register-merge-driver [--scope]  install the git merge driver
+    # Wiring lives in sextant/conflict/cli.py so the top-level dispatcher
+    # stays the single entry point.
+    from sextant.conflict.cli import add_subparsers as _add_conflict_subparsers
+    _add_conflict_subparsers(sub)
 
     return p
 
