@@ -1,0 +1,65 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": true,
+      "language": "python",
+      "path_after": "new/lib.py",
+      "path_before": "old/lib.py"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "from": "old/lib.py",
+        "to": "new/lib.py",
+        "verdict": "near-identical sim=0.89"
+      },
+      "file": "new/lib.py",
+      "kind": "move-file",
+      "related_files": [
+        "old/lib.py"
+      ],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 1,
+          "file_size_delta_bytes": 3,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "moved `old/lib.py` → `new/lib.py` (near-identical sim=0.89)"
+    },
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "body_similarity": 1.0,
+        "call_sites": 1,
+        "container": "function_definition",
+        "new_name": "get_account_id",
+        "old_name": "get_user_id",
+        "prior_keywords": "rename(?:d|s|ing)?, refactor"
+      },
+      "file": "new/lib.py",
+      "kind": "rename-symbol",
+      "related_files": [],
+      "risk": {
+        "bucket": "medium",
+        "score": 0.45,
+        "signals": {
+          "call_site_count": 0,
+          "cross_module_reach": 1,
+          "file_size_delta_bytes": 3,
+          "public_api_impact": true,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "renamed `get_user_id` -> `get_account_id` (function_definition)"
+    }
+  ]
+}

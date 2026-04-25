@@ -1,0 +1,81 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "typescript",
+      "path_after": "lib.ts",
+      "path_before": "lib.ts"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.8,
+      "confidence_bucket": "medium",
+      "evidence": {
+        "after_params": "(x: number, y: number)",
+        "before_params": "( x:number,y:number )",
+        "function": "foo"
+      },
+      "file": "lib.ts",
+      "kind": "change-signature",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.1,
+        "signals": {
+          "call_site_count": 0,
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 9,
+          "public_api_impact": false,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "changed signature of `foo`: `( x:number,y:number )` → `(x: number, y: number)`"
+    },
+    {
+      "confidence": 0.9,
+      "confidence_bucket": "medium",
+      "evidence": {
+        "byte_delta": 9,
+        "formatter": "prettier"
+      },
+      "file": "lib.ts",
+      "kind": "lint-fix",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 9,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "lint-fix: `prettier` signature in commit message"
+    },
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "after_bytes": 57,
+        "before_bytes": 48,
+        "byte_delta": 9
+      },
+      "file": "lib.ts",
+      "kind": "reformat",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 9,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "whitespace/formatting changes only (tokens unchanged)"
+    }
+  ]
+}

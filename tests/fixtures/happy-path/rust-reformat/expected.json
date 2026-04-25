@@ -1,0 +1,81 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "rust",
+      "path_after": "lib.rs",
+      "path_before": "lib.rs"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.8,
+      "confidence_bucket": "medium",
+      "evidence": {
+        "after_params": "(x: i32, y: i32)",
+        "before_params": "(x:i32,y:i32)",
+        "function": "foo"
+      },
+      "file": "lib.rs",
+      "kind": "change-signature",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.1,
+        "signals": {
+          "call_site_count": 0,
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 12,
+          "public_api_impact": false,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "changed signature of `foo`: `(x:i32,y:i32)` → `(x: i32, y: i32)`"
+    },
+    {
+      "confidence": 0.9,
+      "confidence_bucket": "medium",
+      "evidence": {
+        "byte_delta": 12,
+        "formatter": "rustfmt"
+      },
+      "file": "lib.rs",
+      "kind": "lint-fix",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 12,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "lint-fix: `rustfmt` signature in commit message"
+    },
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "after_bytes": 44,
+        "before_bytes": 32,
+        "byte_delta": 12
+      },
+      "file": "lib.rs",
+      "kind": "reformat",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 12,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "whitespace/formatting changes only (tokens unchanged)"
+    }
+  ]
+}

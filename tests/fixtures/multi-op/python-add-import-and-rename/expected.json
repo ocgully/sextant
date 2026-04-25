@@ -1,0 +1,63 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "python",
+      "path_after": "lib.py",
+      "path_before": "lib.py"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.93,
+      "confidence_bucket": "high",
+      "evidence": {
+        "added": [
+          "import logging"
+        ]
+      },
+      "file": "lib.py",
+      "kind": "add-import",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 22,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "added 1 import(s): import logging"
+    },
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "body_similarity": 1.0,
+        "call_sites": 2,
+        "container": "function_definition",
+        "new_name": "get_account_id",
+        "old_name": "get_user_id",
+        "prior_keywords": "rename(?:d|s|ing)?, refactor"
+      },
+      "file": "lib.py",
+      "kind": "rename-symbol",
+      "related_files": [],
+      "risk": {
+        "bucket": "medium",
+        "score": 0.45,
+        "signals": {
+          "call_site_count": 0,
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 22,
+          "public_api_impact": true,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "renamed `get_user_id` -> `get_account_id` (function_definition)"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "go",
+      "path_after": "lib.go",
+      "path_before": "lib.go"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.93,
+      "confidence_bucket": "high",
+      "evidence": {
+        "added": [
+          "import \"log\""
+        ]
+      },
+      "file": "lib.go",
+      "kind": "add-import",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 14,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "added 1 import(s): import \"log\""
+    }
+  ]
+}

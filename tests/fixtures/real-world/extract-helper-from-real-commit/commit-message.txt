@@ -1,0 +1,5 @@
+refactor: extract _copy_agents helper from build_bundle
+
+Patterned after an actual AgentFactory commit during the
+scripts/build-bundle.sh refactor. Inner copy loop was lifted into
+a private helper to make the public function read top-to-bottom.

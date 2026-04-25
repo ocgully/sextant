@@ -1,0 +1,81 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "go",
+      "path_after": "lib.go",
+      "path_before": "lib.go"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.8,
+      "confidence_bucket": "medium",
+      "evidence": {
+        "after_params": "(x int, y int)",
+        "before_params": "(x int,y int)",
+        "function": "Foo"
+      },
+      "file": "lib.go",
+      "kind": "change-signature",
+      "related_files": [],
+      "risk": {
+        "bucket": "medium",
+        "score": 0.45,
+        "signals": {
+          "call_site_count": 0,
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 9,
+          "public_api_impact": true,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "changed signature of `Foo`: `(x int,y int)` → `(x int, y int)`"
+    },
+    {
+      "confidence": 0.9,
+      "confidence_bucket": "medium",
+      "evidence": {
+        "byte_delta": 9,
+        "formatter": "gofmt"
+      },
+      "file": "lib.go",
+      "kind": "lint-fix",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 9,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "lint-fix: `gofmt` signature in commit message"
+    },
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "after_bytes": 61,
+        "before_bytes": 52,
+        "byte_delta": 9
+      },
+      "file": "lib.go",
+      "kind": "reformat",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 9,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "whitespace/formatting changes only (tokens unchanged)"
+    }
+  ]
+}

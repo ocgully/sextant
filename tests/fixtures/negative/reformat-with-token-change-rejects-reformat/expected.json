@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "python",
+      "path_after": "lib.py",
+      "path_before": "lib.py"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.5,
+      "confidence_bucket": "low",
+      "evidence": {
+        "after_bytes": 25,
+        "before_bytes": 25
+      },
+      "file": "lib.py",
+      "kind": "plain-edit",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 0,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "unclassified text change in `lib.py`"
+    }
+  ]
+}

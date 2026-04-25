@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "typescript",
+      "path_after": "lib.ts",
+      "path_before": "lib.ts"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.93,
+      "confidence_bucket": "high",
+      "evidence": {
+        "added": [
+          "import { debug } from 'debug';"
+        ]
+      },
+      "file": "lib.ts",
+      "kind": "add-import",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 32,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "added 1 import(s): import { debug } from 'debug';"
+    }
+  ]
+}

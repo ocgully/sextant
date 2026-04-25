@@ -1,0 +1,63 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "python",
+      "path_after": "lib.py",
+      "path_before": "lib.py"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "removed": [
+          "import os"
+        ]
+      },
+      "file": "lib.py",
+      "kind": "remove-import",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": -8,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "removed 1 import(s): import os"
+    },
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "body_similarity": 1.0,
+        "call_sites": 1,
+        "container": "function_definition",
+        "new_name": "calculate",
+        "old_name": "compute",
+        "prior_keywords": "rename(?:d|s|ing)?, refactor"
+      },
+      "file": "lib.py",
+      "kind": "rename-symbol",
+      "related_files": [],
+      "risk": {
+        "bucket": "medium",
+        "score": 0.45,
+        "signals": {
+          "call_site_count": 0,
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": -8,
+          "public_api_impact": true,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "renamed `compute` -> `calculate` (function_definition)"
+    }
+  ]
+}

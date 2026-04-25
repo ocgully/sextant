@@ -1,0 +1,41 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "go",
+      "path_after": "lib.go",
+      "path_before": "lib.go"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "body_similarity": 1.0,
+        "call_sites": 2,
+        "container": "function_declaration",
+        "new_name": "GetAccountID",
+        "old_name": "GetUserID",
+        "prior_keywords": "rename(?:d|s|ing)?, refactor"
+      },
+      "file": "lib.go",
+      "kind": "rename-symbol",
+      "related_files": [],
+      "risk": {
+        "bucket": "medium",
+        "score": 0.45,
+        "signals": {
+          "call_site_count": 0,
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 6,
+          "public_api_impact": true,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "renamed `GetUserID` -> `GetAccountID` (function_declaration)"
+    }
+  ]
+}

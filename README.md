@@ -153,6 +153,33 @@ Sextant has zero hard dependency on other tools in the ecosystem.
 
 ---
 
+## Tests
+
+Two complementary suites:
+
+- **`tests/test_ops.py`** — per-classifier unit tests. Inline before/after
+  strings, one assertion per classifier branch.
+- **`tests/test_fixtures.py`** — fixture-based snapshot tests. Each
+  fixture under `tests/fixtures/<category>/<name>/` ships before/ +
+  after/ trees plus a golden `expected.json`. The runner materialises
+  the fixture as two commits in a tmp git repo, runs `classify_diff`,
+  and compares to the snapshot. See `tests/fixtures/README.md` for the
+  full structure and how to add new fixtures.
+
+Update snapshots after an intentional classifier change:
+
+```bash
+SEXTANT_UPDATE_SNAPSHOTS=1 pytest tests/test_fixtures.py
+# or:  pytest tests/test_fixtures.py --update-snapshots
+```
+
+The fixture corpus covers happy-path single-op cases (5 per language for
+Python, TypeScript, Rust, Go, Markdown), interleaved multi-op diffs,
+ambiguity pins (which of two plausible classifiers wins), negative
+cases (NOT-X), and real-world commit shapes.
+
+---
+
 ## License
 
 Apache-2.0. See `LICENSE`.

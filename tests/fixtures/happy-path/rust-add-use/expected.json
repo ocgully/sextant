@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "rust",
+      "path_after": "lib.rs",
+      "path_before": "lib.rs"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.93,
+      "confidence_bucket": "high",
+      "evidence": {
+        "added": [
+          "use std::collections::HashMap;"
+        ]
+      },
+      "file": "lib.rs",
+      "kind": "add-import",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 32,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "added 1 import(s): use std::collections::HashMap;"
+    }
+  ]
+}
