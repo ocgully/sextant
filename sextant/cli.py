@@ -13,8 +13,14 @@ Phase 1B commands:
                                  <new-file> <new-hex> <new-mode>
     (internal — invoked by git when sextant is registered as a diff driver)
 
-Deferred (phases 1C-1E):
-  sextant web / conflict / export-to-hopewell / discuss / etc.
+Phase 1C commands:
+  sextant web [--port N] [--open] [--host H]
+    Launches the local Preact + esm.sh web UI (operations / classic-text /
+    timeline views). Stdlib http.server on a single port; no auth, no SSE.
+    See sextant/web/server.py for the full route table.
+
+Deferred (phases 1D-1E):
+  sextant conflict / export-to-hopewell / discuss / etc.
 """
 from __future__ import annotations
 
@@ -215,6 +221,22 @@ def cmd_register_git_driver(args) -> int:
 
 
 # ---------------------------------------------------------------------------
+# web (phase 1C) — see sextant/web/server.py for route table
+# ---------------------------------------------------------------------------
+
+
+def cmd_web(args) -> int:
+    from sextant.web.server import run as run_web
+    cwd = Path(args.cwd).resolve() if args.cwd else Path.cwd()
+    return run_web(
+        cwd,
+        port=args.port,
+        host=args.host,
+        open_browser=args.open,
+    )
+
+
+# ---------------------------------------------------------------------------
 # main entry point
 # ---------------------------------------------------------------------------
 
@@ -283,6 +305,18 @@ def build_parser() -> argparse.ArgumentParser:
                          "(surgical: only the sextant:managed block + "
                          "diff.sextant.* keys are removed)")
     rg.set_defaults(func=cmd_register_git_driver)
+
+    # web (phase 1C)
+    w = sub.add_parser("web", help="launch the local web UI (Preact + esm.sh)")
+    w.add_argument("--port", type=int, default=9881,
+                   help="port to bind (default: 9881)")
+    w.add_argument("--host", default="127.0.0.1",
+                   help="host/iface to bind (default: 127.0.0.1)")
+    w.add_argument("--open", action="store_true",
+                   help="open the URL in the default browser after start")
+    w.add_argument("--cwd", default=None,
+                   help="project root (default: current working directory)")
+    w.set_defaults(func=cmd_web)
 
     return p
 

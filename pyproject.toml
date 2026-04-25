@@ -59,4 +59,11 @@ where = ["."]
 include = ["sextant*"]
 
 [tool.setuptools.package-data]
-sextant = ["gui/*.md", "conflict/*.md", "llm/*.md"]
+sextant = [
+  "gui/*.md",
+  "conflict/*.md",
+  "llm/*.md",
+  "web/static/*.html",
+  "web/static/*.js",
+  "web/static/*.css",
+]
