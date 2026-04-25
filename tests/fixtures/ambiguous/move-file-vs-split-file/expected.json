@@ -1,0 +1,64 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": true,
+      "language": "python",
+      "path_after": "alpha.py",
+      "path_before": "lib.py"
+    },
+    {
+      "is_deleted": false,
+      "is_new": true,
+      "is_renamed": false,
+      "language": "python",
+      "path_after": "beta.py",
+      "path_before": null
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.5,
+      "confidence_bucket": "low",
+      "evidence": {
+        "after_bytes": 26,
+        "before_bytes": 52
+      },
+      "file": "alpha.py",
+      "kind": "plain-edit",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": -26,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "unclassified text change in `alpha.py`"
+    },
+    {
+      "confidence": 0.5,
+      "confidence_bucket": "low",
+      "evidence": {
+        "after_bytes": 25,
+        "before_bytes": 0
+      },
+      "file": "beta.py",
+      "kind": "plain-edit",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 25,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "unclassified text change in `beta.py`"
+    }
+  ]
+}

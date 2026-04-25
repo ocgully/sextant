@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "python",
+      "path_after": "cli.py",
+      "path_before": "cli.py"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.5,
+      "confidence_bucket": "low",
+      "evidence": {
+        "after_bytes": 644,
+        "before_bytes": 455
+      },
+      "file": "cli.py",
+      "kind": "plain-edit",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 189,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "unclassified text change in `cli.py`"
+    }
+  ]
+}

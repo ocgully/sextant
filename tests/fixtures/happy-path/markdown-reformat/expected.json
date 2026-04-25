@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "markdown",
+      "path_after": "doc.md",
+      "path_before": "doc.md"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.9,
+      "confidence_bucket": "medium",
+      "evidence": {
+        "after_bytes": 44,
+        "before_bytes": 55,
+        "byte_delta": -11
+      },
+      "file": "doc.md",
+      "kind": "reformat",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": -11,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "whitespace/formatting changes only (tokens unchanged)"
+    }
+  ]
+}

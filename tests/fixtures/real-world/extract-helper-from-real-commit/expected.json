@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "python",
+      "path_after": "scripts/build.py",
+      "path_before": "scripts/build.py"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "new_function": "_copy_agents",
+        "shrink_bytes": 239,
+        "source_function": "build_bundle"
+      },
+      "file": "scripts/build.py",
+      "kind": "extract-function",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.1,
+        "signals": {
+          "cross_module_reach": 1,
+          "file_size_delta_bytes": 82,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "extracted `_copy_agents()` from `build_bundle()`"
+    }
+  ]
+}

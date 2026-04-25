@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "typescript",
+      "path_after": "lib.ts",
+      "path_before": "lib.ts"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "new_function": "validateOrder",
+        "shrink_bytes": 78,
+        "source_function": "submitOrder"
+      },
+      "file": "lib.ts",
+      "kind": "extract-function",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.1,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 66,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "extracted `validateOrder()` from `submitOrder()`"
+    }
+  ]
+}

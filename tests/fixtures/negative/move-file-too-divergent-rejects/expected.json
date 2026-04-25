@@ -1,0 +1,66 @@
+{
+  "files": [
+    {
+      "is_deleted": true,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "python",
+      "path_after": null,
+      "path_before": "old/lib.py"
+    },
+    {
+      "is_deleted": false,
+      "is_new": true,
+      "is_renamed": false,
+      "language": "python",
+      "path_after": "new/lib.py",
+      "path_before": null
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.93,
+      "confidence_bucket": "high",
+      "evidence": {
+        "added": [
+          "import os",
+          "import sys"
+        ]
+      },
+      "file": "new/lib.py",
+      "kind": "add-import",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 2,
+          "file_size_delta_bytes": 166,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "added 2 import(s): import os, import sys"
+    },
+    {
+      "confidence": 0.5,
+      "confidence_bucket": "low",
+      "evidence": {
+        "after_bytes": 0,
+        "before_bytes": 49
+      },
+      "file": "old/lib.py",
+      "kind": "plain-edit",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 2,
+          "file_size_delta_bytes": -49,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "unclassified text change in `old/lib.py`"
+    }
+  ]
+}

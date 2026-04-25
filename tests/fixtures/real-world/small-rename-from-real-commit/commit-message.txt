@@ -1,0 +1,4 @@
+refactor: rename detect_lang to detect_language
+
+Inspired by an actual Sextant commit during phase 1A. The helper
+was misnamed; this aligns with the `language=` field on FileChange.

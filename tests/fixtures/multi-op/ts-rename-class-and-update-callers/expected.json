@@ -1,0 +1,118 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "typescript",
+      "path_after": "app.ts",
+      "path_before": "app.ts"
+    },
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "typescript",
+      "path_after": "user.ts",
+      "path_before": "user.ts"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.93,
+      "confidence_bucket": "high",
+      "evidence": {
+        "added": [
+          "import { AccountStore } from './user';"
+        ]
+      },
+      "file": "app.ts",
+      "kind": "add-import",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 6,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "added 1 import(s): import { AccountStore } from './user';"
+    },
+    {
+      "confidence": 0.93,
+      "confidence_bucket": "high",
+      "evidence": {
+        "removed": [
+          "import { UserStore } from './user';"
+        ]
+      },
+      "file": "app.ts",
+      "kind": "remove-import",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 6,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "removed 1 import(s): import { UserStore } from './user';"
+    },
+    {
+      "confidence": 0.99,
+      "confidence_bucket": "high",
+      "evidence": {
+        "call_sites": 2,
+        "detection": "identifier-swap",
+        "new_name": "AccountStore",
+        "old_name": "UserStore"
+      },
+      "file": "app.ts",
+      "kind": "rename-symbol",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.15,
+        "signals": {
+          "call_site_count": 1,
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 6,
+          "public_api_impact": false,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "renamed `UserStore` → `AccountStore` (2 references)"
+    },
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "body_similarity": 1.0,
+        "call_sites": 1,
+        "container": "class_declaration",
+        "new_name": "AccountStore",
+        "old_name": "UserStore",
+        "prior_keywords": "rename(?:d|s|ing)?, refactor"
+      },
+      "file": "user.ts",
+      "kind": "rename-symbol",
+      "related_files": [],
+      "risk": {
+        "bucket": "medium",
+        "score": 0.5,
+        "signals": {
+          "call_site_count": 2,
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 3,
+          "public_api_impact": true,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "renamed `UserStore` -> `AccountStore` (class_declaration)"
+    }
+  ]
+}

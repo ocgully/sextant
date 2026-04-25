@@ -1,0 +1,4 @@
+feat: add `cli resume` subcommand
+
+Patterned after the hopewell `resume` subcommand. Adds a new
+command handler + wires it into the argparse subparser table.

@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "go",
+      "path_after": "lib.go",
+      "path_before": "lib.go"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.92,
+      "confidence_bucket": "high",
+      "evidence": {
+        "byte_delta": 24
+      },
+      "file": "lib.go",
+      "kind": "comment-only",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 24,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "comments added/removed/edited; code body unchanged"
+    }
+  ]
+}

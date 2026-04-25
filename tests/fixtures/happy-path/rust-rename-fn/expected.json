@@ -1,0 +1,41 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "rust",
+      "path_after": "lib.rs",
+      "path_before": "lib.rs"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "body_similarity": 1.0,
+        "call_sites": 2,
+        "container": "function_item",
+        "new_name": "get_account_id",
+        "old_name": "get_user_id",
+        "prior_keywords": "rename(?:d|s|ing)?, refactor"
+      },
+      "file": "lib.rs",
+      "kind": "rename-symbol",
+      "related_files": [],
+      "risk": {
+        "bucket": "medium",
+        "score": 0.45,
+        "signals": {
+          "call_site_count": 0,
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 6,
+          "public_api_impact": true,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "renamed `get_user_id` -> `get_account_id` (function_item)"
+    }
+  ]
+}

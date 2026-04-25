@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "python",
+      "path_after": "lib.py",
+      "path_before": "lib.py"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 0.92,
+      "confidence_bucket": "high",
+      "evidence": {
+        "docstring_count_after": 1,
+        "docstring_count_before": 1
+      },
+      "file": "lib.py",
+      "kind": "docstring-only",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.0,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 13,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "docstrings changed; code body unchanged"
+    }
+  ]
+}

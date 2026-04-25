@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "is_deleted": false,
+      "is_new": false,
+      "is_renamed": false,
+      "language": "python",
+      "path_after": "lib.py",
+      "path_before": "lib.py"
+    }
+  ],
+  "operations": [
+    {
+      "confidence": 1.0,
+      "confidence_bucket": "high",
+      "evidence": {
+        "new_function": "validate_order",
+        "shrink_bytes": 95,
+        "source_function": "submit_order"
+      },
+      "file": "lib.py",
+      "kind": "extract-function",
+      "related_files": [],
+      "risk": {
+        "bucket": "low",
+        "score": 0.1,
+        "signals": {
+          "cross_module_reach": 0,
+          "file_size_delta_bytes": 54,
+          "test_coverage_delta": false
+        }
+      },
+      "summary": "extracted `validate_order()` from `submit_order()`"
+    }
+  ]
+}
