@@ -153,6 +153,52 @@ Sextant has zero hard dependency on other tools in the ecosystem.
 
 ---
 
+## Conflicts (phase 1D)
+
+Sextant classifies the *kind* of three-way merge conflict, not just the
+fact that one exists. Five concurrent-operation kinds:
+
+| kind                  | when                                                            |
+|-----------------------|-----------------------------------------------------------------|
+| `concurrent-rename`   | both sides renamed the same identifier to different targets     |
+| `concurrent-edit`     | both sides edited overlapping content                           |
+| `concurrent-move`     | both sides preserve the same lines but reorder them differently |
+| `add-add`             | base was empty (or absent); both sides added content            |
+| `modify-delete`       | one side modified the block; the other deleted it               |
+
+### Inspect a conflicted file
+
+```bash
+sextant conflict path/to/file.py            # text output
+sextant conflict path/to/file.py --format json
+sextant conflict path/to/file.py --resolve  # walk regions interactively
+```
+
+Per region the inspector shows risk bucket, classified kind, base/ours/
+theirs one-liners, intent signals, and a short list of suggested
+resolutions (each keyed to a single letter for the `--resolve` walker).
+
+### Install as a git merge driver
+
+```bash
+sextant register-merge-driver --scope repo   # writes .gitattributes block
+sextant register-merge-driver --scope user   # ~/.gitconfig (no .gitattributes)
+```
+
+When git invokes Sextant as a merge driver (`%O %A %B %P`), Sextant
+classifies the change-set per region and either:
+
+- writes a resolved file and exits 0 (e.g. both sides made the same
+  rename), or
+- writes the file with conflict markers + a `# sextant:merge-summary`
+  block summarising the classified intents, exiting 1 so git keeps the
+  file for the human / agent to fix.
+
+The summary block sits above the markers so editors and agents can read
+the classifier's view at a glance without re-running the CLI.
+
+---
+
 ## Tests
 
 Two complementary suites:

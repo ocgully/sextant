@@ -1,0 +1,6 @@
+{
+  "kind": "concurrent-edit",
+  "min_confidence": 0.4,
+  "risk_bucket": "medium",
+  "suggestion_keys": ["u", "u-other", "k", "a", "m"]
+}

@@ -1,0 +1,6 @@
+{
+  "kind": "concurrent-move",
+  "min_confidence": 0.6,
+  "risk_bucket": "medium",
+  "suggestion_keys": ["u", "u-other", "m"]
+}

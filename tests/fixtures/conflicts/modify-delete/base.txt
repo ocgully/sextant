@@ -1,0 +1,3 @@
+def deprecated_helper():
+    """Old helper — slated for removal."""
+    return 42

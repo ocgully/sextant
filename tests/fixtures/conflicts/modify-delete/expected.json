@@ -1,0 +1,6 @@
+{
+  "kind": "modify-delete",
+  "min_confidence": 0.85,
+  "risk_bucket": "high",
+  "suggestion_keys": ["u", "d", "m"]
+}

@@ -1,0 +1,6 @@
+{
+  "kind": "add-add",
+  "min_confidence": 0.85,
+  "risk_bucket": "medium",
+  "suggestion_keys": ["k", "u", "u-other", "m"]
+}
