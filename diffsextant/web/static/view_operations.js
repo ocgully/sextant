@@ -11,7 +11,7 @@ import { h, Fragment } from "https://esm.sh/preact@10.22.0";
 import { useState, useMemo, useCallback } from "https://esm.sh/preact@10.22.0/hooks";
 
 const KIND_NARRATIVE = {
-  "rename-symbol":      "A symbol was renamed. Sextant matches identifier-occurrence sets across before/after to detect this.",
+  "rename-symbol":      "A symbol was renamed. DiffSextant matches identifier-occurrence sets across before/after to detect this.",
   "extract-function":   "A block of code was extracted into a new function. The body of the new function appears verbatim in the old code.",
   "inline-function":    "A function was inlined into its callers; the body of the old function appears verbatim at each call site.",
   "move-symbol":        "A symbol moved between files (often paired with import changes).",
@@ -29,7 +29,7 @@ const KIND_NARRATIVE = {
   "add-test":           "A new test was added.",
   "remove-test":        "An existing test was removed.",
   "rename-test":        "A test was renamed.",
-  "plain-edit":         "A change Sextant could not classify into a structural operation.",
+  "plain-edit":         "A change DiffSextant could not classify into a structural operation.",
   "malformed":          "The file failed parse / contains malformed text — operation classification was suppressed.",
   "strategy-pattern-intro": "A strategy / dispatch pattern was introduced (multiple subclasses + a polymorphic call site).",
   "god-class-forming":      "A class is growing beyond a healthy size threshold.",

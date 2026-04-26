@@ -2,13 +2,18 @@
 
 Subcommands hosted here:
 
-  diffsextant conflict <file>                  inspect a conflicted file
-  diffsextant conflict <file> --resolve        walk regions interactively
-  sextant register-merge-driver [--scope]  install the git merge driver
-  diffsextant merge-driver %O %A %B %P         driver entrypoint (called by git)
+  diffsextant conflict <file>                      inspect a conflicted file
+  diffsextant conflict <file> --resolve            walk regions interactively
+  diffsextant register-merge-driver [--scope]      install the git merge driver
+  diffsextant merge-driver %O %A %B %P             driver entrypoint (called by git)
 
-The top-level `sextant/cli.py` registers these by importing
-``sextant.conflict.cli.add_subparsers``.
+The top-level `diffsextant/cli.py` registers these by importing
+``diffsextant.conflict.cli.add_subparsers``.
+
+Backward compat: the git-config namespace (``merge.sextant.*``) and the
+``.gitattributes`` sentinel (``# sextant:merge-managed``) are preserved
+on the legacy ``sextant`` name on purpose — see ``diffsextant/git_driver.py``
+for the full rationale. Pre-rename merge-driver installs keep working.
 """
 from __future__ import annotations
 
@@ -209,7 +214,7 @@ def _format_unresolved(region: ConflictRegion, base: str, ours: str, theirs: str
 
 
 # ---------------------------------------------------------------------------
-# `sextant register-merge-driver`
+# `diffsextant register-merge-driver`
 # ---------------------------------------------------------------------------
 
 
@@ -235,7 +240,7 @@ def cmd_register_merge_driver(args) -> int:
     try:
         subprocess.run(
             ["git", "config", scope_flag, "merge.sextant.name",
-             "Sextant semantic merge driver"],
+             "DiffSextant semantic merge driver"],
             check=True, cwd=str(cwd),
         )
         subprocess.run(
@@ -310,7 +315,7 @@ def add_subparsers(sub: argparse._SubParsersAction) -> None:
     # register-merge-driver
     rmd = sub.add_parser(
         "register-merge-driver",
-        help="install sextant as a git merge driver",
+        help="install diffsextant as a git merge driver",
     )
     rmd.add_argument("--scope", choices=["user", "repo"], default="repo")
     rmd.set_defaults(func=cmd_register_merge_driver)

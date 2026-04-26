@@ -13,7 +13,9 @@ dist/
 .venv/
 venv/
 
-# Sextant runtime
+# DiffSextant runtime
+.diffsextant/
+# Legacy storage dir kept ignored for projects pre-`diffsextant migrate-from-sextant`.
 .sextant/
 
 # Editors

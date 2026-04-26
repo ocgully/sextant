@@ -3,13 +3,13 @@
 Design notes (mirrors Pedia's web/server.py — same stdlib-only pattern):
 
 * Stdlib only. `http.server` + `subprocess` + `json` + `pathlib`. No
-  FastAPI, no bundler, no SSE. Sextant is commit-paced — when the diff
-  changes you click Refresh (or the URL hash refreshes a re-fetch).
+  FastAPI, no bundler, no SSE. DiffSextant is commit-paced — when the
+  diff changes you click Refresh (or the URL hash refreshes a re-fetch).
 * Read-only. Every handler is GET; mutations live in the CLI (and 1D's
   conflict resolver, when that lands).
 * Thin adapter. Every endpoint calls into the same library entrypoints
-  the CLI uses (`sextant.tree_delta.classify_diff`, `sextant.git_context`,
-  `sextant.risk`). No alternate code path.
+  the CLI uses (`diffsextant.tree_delta.classify_diff`,
+  `diffsextant.git_context`, `diffsextant.risk`). No alternate code path.
 * The renderer/operation taxonomy is owned by phase 1A; this server
   just shapes the JSON for the browser.
 
@@ -30,7 +30,7 @@ import webbrowser
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from diffsextant import __version__ as SEXTANT_VERSION
+from diffsextant import __version__ as DIFFSEXTANT_VERSION
 
 
 STATIC_DIR = Path(__file__).parent / "static"
@@ -165,7 +165,9 @@ def handle_meta(root: Path) -> Dict[str, Any]:
     branch = (_run_git(["rev-parse", "--abbrev-ref", "HEAD"], root) or "").strip() or None
     return {
         "project_root": str(root),
-        "sextant_version": SEXTANT_VERSION,
+        "diffsextant_version": DIFFSEXTANT_VERSION,
+        # Legacy alias kept one cycle for unmigrated browser clients.
+        "sextant_version": DIFFSEXTANT_VERSION,
         "head": head,
         "branch": branch,
     }
@@ -176,12 +178,12 @@ def handle_meta(root: Path) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-class SextantWebHandler(http.server.BaseHTTPRequestHandler):
-    server_version = f"sextant-web/{SEXTANT_VERSION}"
+class DiffSextantWebHandler(http.server.BaseHTTPRequestHandler):
+    server_version = f"diffsextant-web/{DIFFSEXTANT_VERSION}"
 
     def log_message(self, fmt: str, *args: Any) -> None:  # type: ignore[override]
         sys.stderr.write(
-            "[sextant-web] %s - %s\n" % (self.address_string(), fmt % args)
+            "[diffsextant-web] %s - %s\n" % (self.address_string(), fmt % args)
         )
 
     # -- helpers -----------------------------------------------------------
@@ -297,22 +299,22 @@ def run(
     open_browser: bool = False,
     host: str = "127.0.0.1",
 ) -> int:
-    """Start the read-only Sextant web UI. Blocks until Ctrl+C."""
+    """Start the read-only DiffSextant web UI. Blocks until Ctrl+C."""
     if not project_root.is_dir():
         sys.stderr.write(f"error: not a directory: {project_root}\n")
         return 2
     if not (project_root / ".git").exists():
-        # not necessarily fatal — sextant may be reading a worktree —
+        # not necessarily fatal — diffsextant may be reading a worktree —
         # but warn so the user knows /api/diff/current will likely 4xx.
         sys.stderr.write(
             f"warning: no .git/ at {project_root} — diff endpoints will return errors\n"
         )
 
-    server = _ThreadingHTTPServer((host, port), SextantWebHandler)
+    server = _ThreadingHTTPServer((host, port), DiffSextantWebHandler)
     server.project_root = project_root  # type: ignore[attr-defined]
     url = f"http://{host}:{port}/"
     sys.stdout.write(
-        f"diffsextant web {SEXTANT_VERSION} -- serving {project_root} at {url}\n"
+        f"diffsextant web {DIFFSEXTANT_VERSION} -- serving {project_root} at {url}\n"
         "(read-only; Ctrl+C to stop)\n"
     )
     if open_browser:
@@ -326,7 +328,7 @@ def run(
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        sys.stdout.write("\nsextant web: stopping\n")
+        sys.stdout.write("\ndiffsextant web: stopping\n")
     finally:
         server.server_close()
     return 0

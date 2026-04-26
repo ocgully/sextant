@@ -1,6 +1,6 @@
 """Residual classification — refine LOW-confidence ops via the agent runner.
 
-Sextant's deterministic classifiers emit operations with a confidence
+DiffSextant's deterministic classifiers emit operations with a confidence
 score in [0,1]. The bucket thresholds (per `ops/base.py`) are:
 
     > 0.9   high
@@ -28,7 +28,7 @@ refines residuals.
         normalised_evidence(op.evidence)
     )
 
-Cached at ``.sextant/cache/llm/<sha>.json``. Invalidates whenever the
+Cached at ``.diffsextant/cache/llm/<sha>.json``. Invalidates whenever the
 underlying op changes shape. Independent of the diff range itself —
 two unrelated diffs that produce the same residual op key share a
 cache hit.
@@ -128,7 +128,7 @@ def cache_path_for(op, *, cwd: Optional[Path] = None) -> Path:
 # ---------------------------------------------------------------------------
 
 
-PROMPT_HEADER = """You are Sextant's residual classifier. The deterministic rule
+PROMPT_HEADER = """You are DiffSextant's residual classifier. The deterministic rule
 engine assigned the operation below a low confidence (< {threshold:.2f}).
 
 Your job: confirm the candidate classification, OR correct it to a
@@ -136,7 +136,7 @@ better-fitting kind. Reply with ONE JSON object on a single line:
 
     {{"kind": "<operation-kind>", "confidence": <0..1>, "rationale": "<one sentence>"}}
 
-Valid `kind` values: any operation kind already in Sextant
+Valid `kind` values: any operation kind already in DiffSextant
 (rename-symbol, extract-function, move-symbol, move-file,
 reorder-statements, reformat, comment-only, docstring-only, lint-fix,
 invert-condition, add-import, remove-import, reorder-imports,
@@ -236,7 +236,7 @@ def run_residual(operations,
 
     Cache hits are taken before any subprocess fires. Misses build the
     prompt, dispatch via the runner, parse the response, and write
-    `.sextant/cache/llm/<sha>.json` on success.
+    `.diffsextant/cache/llm/<sha>.json` on success.
     """
     from diffsextant.llm.runner import detect_runner as _detect, invoke_runner as _invoke
 

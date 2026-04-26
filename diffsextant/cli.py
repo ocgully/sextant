@@ -2,34 +2,34 @@
 
 Phase 1A commands:
   diffsextant diff <ref1> <ref2> [files...] [--llm]
-  sextant explain <commit>
-  sextant check <path>
+  diffsextant explain <commit>
+  diffsextant check <path>
   diffsextant cache {clear|stats}
-  sextant config {get|set|list}
+  diffsextant config {get|set|list}
 
 Phase 1B commands:
-  sextant register-git-driver [--scope user|repo] [--uninstall]
+  diffsextant register-git-driver [--scope user|repo] [--uninstall]
   diffsextant diff --git-driver-mode <path> <old-file> <old-hex> <old-mode>
                                  <new-file> <new-hex> <new-mode>
-    (internal — invoked by git when sextant is registered as a diff driver)
+    (internal — invoked by git when diffsextant is registered as a diff driver)
 
 Phase 1C commands:
   diffsextant web [--port N] [--open] [--host H]
     Launches the local Preact + esm.sh web UI (operations / classic-text /
     timeline views). Stdlib http.server on a single port; no auth, no SSE.
-    See sextant/web/server.py for the full route table.
+    See diffsextant/web/server.py for the full route table.
 
 Phase 1D commands:
   diffsextant conflict <file> [--format text|json] [--resolve]
   diffsextant merge-driver <base> <ours> <theirs> <path>     (called by git)
-  sextant register-merge-driver [--scope user|repo]
+  diffsextant register-merge-driver [--scope user|repo]
 
 Phase 1E commands:
-  diffsextant diff ... --llm                        # refine LOW-confidence ops
-                                                # via the user's agent runner
-                                                # (no API key)
-  sextant discuss <ref1> <ref2> [--agent ...]   # build a conversation bundle
-                                                # and trigger the agent runner
+  diffsextant diff ... --llm                          # refine LOW-confidence ops
+                                                  # via the user's agent runner
+                                                  # (no API key)
+  diffsextant discuss <ref1> <ref2> [--agent ...]  # build a conversation bundle
+                                                  # and trigger the agent runner
 """
 from __future__ import annotations
 
@@ -195,7 +195,7 @@ def cmd_cache(args) -> int:
     if args.action == "clear":
         ok = cache_mod.clear(cwd)
         if ok:
-            sys.stdout.write(f"cleared {cwd / '.sextant' / 'cache'}\n")
+            sys.stdout.write(f"cleared {cwd / '.diffsextant' / 'cache'}\n")
         else:
             sys.stdout.write("no cache to clear\n")
         return 0
@@ -266,7 +266,7 @@ def cmd_register_git_driver(args) -> int:
 
 
 # ---------------------------------------------------------------------------
-# web (phase 1C) — see sextant/web/server.py for route table
+# web (phase 1C) — see diffsextant/web/server.py for route table
 # ---------------------------------------------------------------------------
 
 
@@ -289,8 +289,8 @@ def cmd_web(args) -> int:
 def cmd_discuss(args) -> int:
     """Assemble a discuss bundle for `ref1..ref2` and trigger the runner.
 
-    No API key is required — Sextant talks to the user's existing agent
-    CLI as a subprocess. When no runner is on PATH, the prompt is
+    No API key is required — DiffSextant talks to the user's existing
+    agent CLI as a subprocess. When no runner is on PATH, the prompt is
     copied to the OS clipboard so the user can paste into whatever
     agent they actually use.
     """
@@ -343,7 +343,7 @@ def cmd_discuss(args) -> int:
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="diffsextant",
-        description="Semantic-operation diff classifier (formerly sextant).",
+        description="Semantic-operation diff classifier.",
     )
     p.add_argument("--version", action="version", version=f"diffsextant {__version__}")
 
@@ -411,12 +411,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     # register-git-driver
     rg = sub.add_parser("register-git-driver",
-                        help="install sextant as a git diff driver")
+                        help="install diffsextant as a git diff driver")
     rg.add_argument("--scope", choices=["user", "repo"], default="repo")
     rg.add_argument("--uninstall", action="store_true",
-                    help="remove a previously-installed sextant driver "
+                    help="remove a previously-installed diffsextant driver "
                          "(surgical: only the sextant:managed block + "
-                         "diff.sextant.* keys are removed)")
+                         "diff.sextant.* keys are removed; the legacy "
+                         "`sextant` namespace is preserved on purpose so "
+                         "pre-rename installs keep working)")
     rg.set_defaults(func=cmd_register_git_driver)
 
     # web (phase 1C)
@@ -434,7 +436,7 @@ def build_parser() -> argparse.ArgumentParser:
     # phase 1D — conflict tooling subcommands
     #   diffsextant conflict <file>                  inspect a conflicted file
     #   diffsextant merge-driver %O %A %B %P         git merge-driver entrypoint
-    #   sextant register-merge-driver [--scope]  install the git merge driver
+    #   diffsextant register-merge-driver [--scope]  install the git merge driver
     from diffsextant.conflict.cli import add_subparsers as _add_conflict_subparsers
     _add_conflict_subparsers(sub)
 
@@ -452,7 +454,9 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["claude", "codex", "opencode", "stdout", "mock", "clipboard"],
         default=None,
         help="explicit runner choice. When omitted, the env var "
-             "`SEXTANT_AGENT_RUNNER` is honoured, then PATH-detection.",
+             "`DIFFSEXTANT_AGENT_RUNNER` is honoured (legacy "
+             "`SEXTANT_AGENT_RUNNER` accepted for one cycle), then "
+             "PATH-detection.",
     )
     di.add_argument("--cwd", default=None)
     di.add_argument("--format", choices=["text", "json"], default="text",
@@ -486,6 +490,10 @@ def main_deprecated_alias(argv: Optional[List[str]] = None) -> int:
     Prints a one-line stderr warning and forwards to `main()`. Scheduled
     for removal in v2.0 (kept for two minor cycles). See README for
     migration notes.
+
+    DO NOT rename or remove without updating the deprecation timeline in
+    pyproject.toml's `[project.scripts]` block — the legacy `sextant`
+    entry-point binds to this symbol by name.
     """
     sys.stderr.write(
         "sextant: 'sextant' is the legacy name for diffsextant; "

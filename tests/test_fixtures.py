@@ -2,9 +2,11 @@
 
 For each directory under tests/fixtures/<category>/<name>/:
   - Materialise `before/` + `after/` as two commits in a tmp git repo
-  - Run Sextant's classifier (programmatic API, not subprocess)
+  - Run DiffSextant's classifier (programmatic API, not subprocess)
   - Normalise + compare against `expected.json`
-  - Fail on drift; rewrite on `--update-snapshots` / SEXTANT_UPDATE_SNAPSHOTS=1
+  - Fail on drift; rewrite on `--update-snapshots` /
+    DIFFSEXTANT_UPDATE_SNAPSHOTS=1 (legacy SEXTANT_UPDATE_SNAPSHOTS=1
+    accepted for one cycle)
 
 Normalisation strips machine-specific noise: the tmp `cwd` from
 git_context, blame_churn (history-dependent), and call_site_count
@@ -129,7 +131,7 @@ _FIXTURES = list(iter_fixture_dirs())
 )
 def test_fixture_snapshot(fixture_dir: Path, tmp_path: Path,
                           update_snapshots: bool) -> None:
-    """Run Sextant against the fixture's diff and compare to expected.json."""
+    """Run DiffSextant against the fixture's diff and compare to expected.json."""
     before_dir = fixture_dir / "before"
     after_dir = fixture_dir / "after"
     expected_path = fixture_dir / "expected.json"
@@ -167,7 +169,7 @@ def test_fixture_snapshot(fixture_dir: Path, tmp_path: Path,
         ))
         pytest.fail(
             f"Snapshot drift in {_fixture_id(fixture_dir)}:\n{diff}\n"
-            f"To accept: SEXTANT_UPDATE_SNAPSHOTS=1 pytest tests/test_fixtures.py "
+            f"To accept: DIFFSEXTANT_UPDATE_SNAPSHOTS=1 pytest tests/test_fixtures.py "
             f"OR pytest tests/test_fixtures.py --update-snapshots"
         )
 

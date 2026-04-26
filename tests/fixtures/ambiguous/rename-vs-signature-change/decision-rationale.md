@@ -1,6 +1,6 @@
 # Why this fixture's expected output is what it is
 
-When name AND signature both change, Sextant currently emits
+When name AND signature both change, DiffSextant currently emits
 BOTH a `rename-symbol` and a `change-signature` op (two ops). The
 rename detector is structural-position-based (same function order,
 different name) so it still fires. The change-signature detector

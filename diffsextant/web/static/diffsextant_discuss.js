@@ -1,4 +1,4 @@
-/* sextant_discuss.js — phase 1E
+/* diffsextant_discuss.js — phase 1E
 
 The "Discuss this diff" toolbar button. Designed as a small, isolated
 DOM addition so it can be merged into the 1C view layer without
@@ -6,25 +6,25 @@ touching 1C's diff/operations/timeline view files.
 
 Usage from 1C's main bundle:
 
-    import { mountDiscussButton } from "/static/sextant_discuss.js";
+    import { mountDiscussButton } from "/static/diffsextant_discuss.js";
     mountDiscussButton(document.querySelector("#toolbar"), {
         getRange: () => ({ ref1: state.ref1, ref2: state.ref2 }),
     });
 
 The button POSTs to `/api/discuss`, which the server wires to
-`sextant.llm.discuss.discuss`. The response includes the bundle path;
-we render a small toast linking to it (so the user can `cd` there or
-open it from their editor).
+`diffsextant.llm.discuss.discuss`. The response includes the bundle
+path; we render a small toast linking to it (so the user can `cd`
+there or open it from their editor).
 */
 
-const STYLE_ID = "sextant-discuss-style";
+const STYLE_ID = "diffsextant-discuss-style";
 
 function injectStyle() {
     if (document.getElementById(STYLE_ID)) return;
     const s = document.createElement("style");
     s.id = STYLE_ID;
     s.textContent = `
-        .sextant-discuss-btn {
+        .diffsextant-discuss-btn {
             cursor: pointer;
             padding: 4px 10px;
             border: 1px solid currentColor;
@@ -32,8 +32,8 @@ function injectStyle() {
             background: transparent;
             font: inherit;
         }
-        .sextant-discuss-btn:disabled { opacity: 0.5; cursor: wait; }
-        .sextant-discuss-toast {
+        .diffsextant-discuss-btn:disabled { opacity: 0.5; cursor: wait; }
+        .diffsextant-discuss-toast {
             position: fixed;
             right: 16px;
             bottom: 16px;
@@ -46,8 +46,8 @@ function injectStyle() {
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
             z-index: 9999;
         }
-        .sextant-discuss-toast code { word-break: break-all; }
-        .sextant-discuss-toast .close {
+        .diffsextant-discuss-toast code { word-break: break-all; }
+        .diffsextant-discuss-toast .close {
             float: right; cursor: pointer;
             margin-left: 8px;
         }
@@ -57,7 +57,7 @@ function injectStyle() {
 
 function showToast(message, opts = {}) {
     const node = document.createElement("div");
-    node.className = "sextant-discuss-toast";
+    node.className = "diffsextant-discuss-toast";
     node.innerHTML = message;
     const close = document.createElement("span");
     close.className = "close";
@@ -82,22 +82,22 @@ function showToast(message, opts = {}) {
  */
 export function mountDiscussButton(container, opts = {}) {
     if (!container) {
-        console.warn("[sextant-discuss] no container provided");
+        console.warn("[diffsextant-discuss] no container provided");
         return null;
     }
     if (typeof opts.getRange !== "function") {
-        console.warn("[sextant-discuss] getRange callback is required");
+        console.warn("[diffsextant-discuss] getRange callback is required");
         return null;
     }
     injectStyle();
 
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "sextant-discuss-btn";
+    btn.className = "diffsextant-discuss-btn";
     btn.textContent = opts.label || "Discuss this diff";
     btn.title =
-        "Build a Sextant conversation bundle and trigger the user's agent runner. " +
-        "Equivalent to `sextant discuss <ref1> <ref2>`.";
+        "Build a DiffSextant conversation bundle and trigger the user's agent runner. " +
+        "Equivalent to `diffsextant discuss <ref1> <ref2>`.";
 
     btn.addEventListener("click", async () => {
         const range = opts.getRange();
@@ -145,14 +145,19 @@ export function mountDiscussButton(container, opts = {}) {
     return btn;
 }
 
-// Convenience: auto-mount when a `[data-sextant-toolbar]` element is
-// present and `window.__sextantState` exposes a getRange function. This
-// lets minimal HTML pages wire the button without ESM.
+// Convenience: auto-mount when a `[data-diffsextant-toolbar]` element is
+// present and `window.__diffsextantState` exposes a getRange function.
+// This lets minimal HTML pages wire the button without ESM. The legacy
+// `[data-sextant-toolbar]` selector and `window.__sextantState` are still
+// honoured for one cycle so pages built before the rename keep working.
 if (typeof window !== "undefined") {
     document.addEventListener("DOMContentLoaded", () => {
-        const tb = document.querySelector("[data-sextant-toolbar]");
-        if (tb && window.__sextantState && typeof window.__sextantState.getRange === "function") {
-            mountDiscussButton(tb, { getRange: window.__sextantState.getRange });
+        const tb =
+            document.querySelector("[data-diffsextant-toolbar]") ||
+            document.querySelector("[data-sextant-toolbar]");
+        const state = window.__diffsextantState || window.__sextantState;
+        if (tb && state && typeof state.getRange === "function") {
+            mountDiscussButton(tb, { getRange: state.getRange });
         }
     });
 }

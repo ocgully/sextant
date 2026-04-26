@@ -1,7 +1,7 @@
 """Shared test helpers — tmp git repo construction + fixture discovery.
 
 Used by tests/test_fixtures.py to materialise a fixture's `before/` +
-`after/` trees as two commits in a throwaway repo, then run Sextant's
+`after/` trees as two commits in a throwaway repo, then run DiffSextant's
 classifier against them.
 """
 from __future__ import annotations
@@ -71,7 +71,7 @@ def materialise_fixture(repo: Path, before_dir: Path, after_dir: Path,
     # Even if `before/` is empty, we need a baseline commit so HEAD~1 exists.
     # Drop a sentinel that we then remove in the after-commit so the diff
     # remains accurate.
-    sentinel = repo / ".sextant-fixture-sentinel"
+    sentinel = repo / ".diffsextant-fixture-sentinel"
     has_before_files = any(repo.iterdir()) and any(
         c.name != ".git" for c in repo.iterdir()
     )
@@ -134,13 +134,18 @@ def iter_fixture_dirs() -> Iterable[Path]:
 def pytest_addoption(parser):
     parser.addoption(
         "--update-snapshots", action="store_true", default=False,
-        help="Rewrite tests/fixtures/*/expected.json from current Sextant output.",
+        help="Rewrite tests/fixtures/*/expected.json from current DiffSextant output.",
     )
 
 
 @pytest.fixture
 def update_snapshots(request) -> bool:
-    """True when the user passed --update-snapshots OR set SEXTANT_UPDATE_SNAPSHOTS=1."""
+    """True when the user passed --update-snapshots OR set
+    DIFFSEXTANT_UPDATE_SNAPSHOTS=1 (legacy SEXTANT_UPDATE_SNAPSHOTS=1
+    accepted for one cycle)."""
     if request.config.getoption("--update-snapshots"):
         return True
-    return os.environ.get("SEXTANT_UPDATE_SNAPSHOTS", "").lower() in ("1", "true", "yes")
+    for var in ("DIFFSEXTANT_UPDATE_SNAPSHOTS", "SEXTANT_UPDATE_SNAPSHOTS"):
+        if os.environ.get(var, "").lower() in ("1", "true", "yes"):
+            return True
+    return False

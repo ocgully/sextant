@@ -1,6 +1,6 @@
 """HTTP-shape-agnostic handlers for the web view (phase 1D).
 
-This module mirrors the ``sextant.web.server`` style: pure functions
+This module mirrors the ``diffsextant.web.server`` style: pure functions
 that take a parsed body / path and return a JSON-shaped dict, so the
 1C server can dispatch to them without coupling. An ``attach_conflict``
 helper monkey-patches a stdlib ``BaseHTTPRequestHandler`` for cases

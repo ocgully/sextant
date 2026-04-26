@@ -1,2 +1,5 @@
-# sextant:managed -- agent caches + per-project history
+# diffsextant:managed -- agent caches + per-project history
+.diffsextant/
+# Legacy storage dir (pre-rename); still ignored until projects run
+# `diffsextant migrate-from-sextant`.
 .sextant/

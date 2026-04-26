@@ -1,4 +1,4 @@
-"""Allow `python -m sextant`."""
+"""Allow `python -m diffsextant`."""
 import sys
 from diffsextant.cli import main
 

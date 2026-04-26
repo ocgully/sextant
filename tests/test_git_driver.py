@@ -1,4 +1,4 @@
-"""Tests for sextant/git_driver.py — install / uninstall idempotency,
+"""Tests for diffsextant/git_driver.py — install / uninstall idempotency,
 sentinel detection, .gitattributes merge, scoped config, --git-driver-mode
 protocol roundtrip.
 

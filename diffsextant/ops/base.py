@@ -103,7 +103,7 @@ class FileChange:
 
 @dataclass
 class Operation:
-    """A single classified operation. The unit of Sextant's output."""
+    """A single classified operation. The unit of DiffSextant's output."""
     kind: OperationKind
     file: str                     # primary file (after-path if renamed)
     confidence: float             # 0.0 - 1.0

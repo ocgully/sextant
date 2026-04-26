@@ -1,6 +1,6 @@
 """Agent-runner detection + invocation.
 
-Sextant's LLM features all flow through the user's existing agent
+DiffSextant's LLM features all flow through the user's existing agent
 runner (Claude Code primary; Codex / OpenCode secondary). We never
 import the Anthropic SDK and never read ANTHROPIC_API_KEY. The runner
 is treated as a black-box subprocess: hand it a prompt, observe its
@@ -8,7 +8,9 @@ exit code + stdout, parse JSON if the prompt asked for JSON.
 
 Detection order:
 1. Explicit choice from caller (`detect_runner("claude")`).
-2. `SEXTANT_AGENT_RUNNER` env var (`mock` is supported for tests/CI).
+2. ``DIFFSEXTANT_AGENT_RUNNER`` env var (``mock`` is supported for
+   tests/CI). The legacy ``SEXTANT_AGENT_RUNNER`` is honoured as a
+   fallback for one deprecation cycle.
 3. First runner found on PATH from `RUNNER_CHOICES` (Claude → Codex →
    OpenCode).
 
@@ -75,7 +77,9 @@ def detect_runner(preferred: Optional[str] = None,
 
     Resolution order:
       1. Explicit `preferred` argument (callers that already know).
-      2. `SEXTANT_AGENT_RUNNER` env var (CI / tests use `mock` here).
+      2. ``DIFFSEXTANT_AGENT_RUNNER`` env var, falling back to the
+         legacy ``SEXTANT_AGENT_RUNNER`` for one deprecation cycle.
+         (CI / tests use ``mock`` here.)
       3. First entry in `RUNNER_CHOICES` whose binary is on PATH.
 
     `path_lookup` is `shutil.which` by default; tests pass a stub.
@@ -94,7 +98,7 @@ def detect_runner(preferred: Optional[str] = None,
         # decide whether to fall back to clipboard.
         return None
 
-    env_choice = env.get("SEXTANT_AGENT_RUNNER")
+    env_choice = env.get("DIFFSEXTANT_AGENT_RUNNER") or env.get("SEXTANT_AGENT_RUNNER")
     if env_choice:
         env_choice = env_choice.strip()
         if env_choice in PSEUDO_RUNNERS:
@@ -256,7 +260,7 @@ def invoke_runner(runner: str, prompt: str, *,
     # Persist the prompt to disk if the caller didn't.
     if prompt_path is None:
         import tempfile
-        td = Path(tempfile.gettempdir()) / "sextant-prompts"
+        td = Path(tempfile.gettempdir()) / "diffsextant-prompts"
         td.mkdir(parents=True, exist_ok=True)
         # Use the prompt's content hash for caching/reuse + dedup.
         import hashlib

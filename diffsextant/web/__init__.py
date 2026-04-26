@@ -6,8 +6,8 @@ all writes go through the CLI.
 
 Phase 1C ships the operations / classic-text / timeline views.
 Phase 1D adds `/api/conflict/<file>` for conflict resolution UX.
-Phase 1E adds `/api/discuss` + `sextant_discuss.js` toolbar button.
+Phase 1E adds `/api/discuss` + `diffsextant_discuss.js` toolbar button.
 
-Public entry: `sextant.web.server.run(project_root, port=9881, open_browser=False)`.
+Public entry: `diffsextant.web.server.run(project_root, port=9881, open_browser=False)`.
 The `diffsextant web` CLI subcommand wires through to `run(...)`.
 """

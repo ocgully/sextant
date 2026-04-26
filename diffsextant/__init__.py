@@ -1,8 +1,7 @@
-"""diffsextant — semantic-operation diff classifier (formerly `sextant`).
+"""diffsextant — semantic-operation diff classifier.
 
-Renamed in April 2026. The legacy `sextant` CLI entry point is kept as
-a deprecation alias that prints a stderr warning and forwards to
-`diffsextant`.
+The legacy `sextant` CLI entry point is kept as a deprecation alias that
+prints a stderr warning and forwards to `diffsextant`.
 
 Reads diffs as operations (rename, extract, move, reformat, ...) rather
 than raw line deltas. Phase 1A ships the deterministic classifier + CLI +

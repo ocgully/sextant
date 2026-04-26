@@ -1,9 +1,9 @@
 """LLM residual classifier + agent-session integration (phase 1E).
 
-Sextant does NOT embed a chat client and does NOT require ANTHROPIC_API_KEY.
-The pattern is: package the diff context + classified ops as a context
-bundle on disk, then trigger the user's existing agent runner (Claude
-Code primary; Codex / OpenCode secondary).
+DiffSextant does NOT embed a chat client and does NOT require
+ANTHROPIC_API_KEY. The pattern is: package the diff context + classified
+ops as a context bundle on disk, then trigger the user's existing agent
+runner (Claude Code primary; Codex / OpenCode secondary).
 
 Public surface:
 

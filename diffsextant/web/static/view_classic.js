@@ -1,4 +1,4 @@
-// Classic-text view (§6.2 of the Sextant plan).
+// Classic-text view (§6.2 of the DiffSextant plan).
 //
 // Side-by-side OR unified text-diff with semantic overlay. Each operation
 // contributes a colour to the gutter strip on the lines where its

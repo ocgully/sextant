@@ -1,6 +1,6 @@
 # Which wins: comment-only or docstring-only
 
-Sextant has two distinct classifiers — `docstring-only` is
+DiffSextant has two distinct classifiers — `docstring-only` is
 language-specific (Python triple-quoted strings as the FIRST
 statement of a function/class/module). `comment-only` is more
 general (#-style comments).

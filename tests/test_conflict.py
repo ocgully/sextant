@@ -214,7 +214,7 @@ def test_classifier_returns_none_when_ours_equals_theirs():
 
 
 def test_rename_both_sides_same_target():
-    """Both sides independently performed the *same* rename — sextant
+    """Both sides independently performed the *same* rename — diffsextant
     should be able to pick it cleanly via the merge driver path."""
     region = analyze_three_blobs(
         "x = old_name + 1\n",

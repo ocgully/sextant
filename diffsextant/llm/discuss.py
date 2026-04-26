@@ -1,9 +1,9 @@
-"""`sextant discuss` — assemble a context bundle and trigger the user's agent.
+"""`diffsextant discuss` — assemble a context bundle and trigger the user's agent.
 
-The "discuss" flow is deliberately lightweight. Sextant doesn't run a
-chat client; it produces:
+The "discuss" flow is deliberately lightweight. DiffSextant doesn't run
+a chat client; it produces:
 
-    .sextant/conversations/<session-id>/
+    .diffsextant/conversations/<session-id>/
         context.md          ← human-readable narrative
         operations.json     ← raw classifier output (round-trippable)
         diff.patch          ← raw `git diff` for the range
@@ -55,10 +55,10 @@ def bundle_path_for(cwd: Path, ref1: str, ref2: str) -> Path:
 # ---------------------------------------------------------------------------
 
 
-SEED_PROMPT = """You are reviewing a Sextant-classified diff with the user.
+SEED_PROMPT = """You are reviewing a DiffSextant-classified diff with the user.
 
-Sextant has already done the deterministic work — the operations file
-attached lists every classified change with confidence + evidence.
+DiffSextant has already done the deterministic work — the operations
+file attached lists every classified change with confidence + evidence.
 Your job is to discuss it: surface implications, spot missed
 intent, and answer follow-ups.
 
@@ -67,7 +67,7 @@ operations and any low-confidence residuals worth a closer look.
 Keep technical accuracy over prose density. Cite file paths verbatim.
 
 Bundle layout (everything is on disk under
-`.sextant/conversations/<session-id>/`):
+`.diffsextant/conversations/<session-id>/`):
 
   - `context.md`     — this file's prose narrative + git context
   - `operations.json` — raw classifier output
@@ -95,7 +95,7 @@ def _narrative(result, ref1: str, ref2: str, cwd: Path,
     `generated_at` is overridable so tests can pin determinism.
     """
     lines: List[str] = []
-    lines.append(f"# Sextant — discuss {ref1}..{ref2}")
+    lines.append(f"# DiffSextant — discuss {ref1}..{ref2}")
     lines.append("")
     ts = generated_at or datetime.now(timezone.utc).isoformat(timespec='seconds')
     lines.append(f"- generated: {ts}")
@@ -181,7 +181,7 @@ def build_discuss_bundle(result, ref1: str, ref2: str,
                          seed_prompt: Optional[str] = None,
                          generated_at: Optional[str] = None) -> DiscussBundle:
     """Materialise the four bundle files under
-    ``.sextant/conversations/<session-id>/``. Returns a DiscussBundle
+    ``.diffsextant/conversations/<session-id>/``. Returns a DiscussBundle
     handle.
 
     Determinism: same (cwd, ref1, ref2, result, generated_at) ->

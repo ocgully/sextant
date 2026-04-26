@@ -14,7 +14,7 @@ Covers:
   artefacts.
 
 Mock-runner protocol: tests never touch the network. The `mock` runner
-in `sextant.llm.runner` returns a fixed JSON envelope; the residual
+in `diffsextant.llm.runner` returns a fixed JSON envelope; the residual
 classifier folds that into `evidence.llm_refinement` so the rest of the
 pipeline can be exercised end-to-end without an LLM.
 """
@@ -184,18 +184,31 @@ class TestDetectRunner:
         assert detect_runner("claude", path_lookup=lambda _: None) is None
 
     def test_env_var_pseudo(self):
-        assert detect_runner(env={"SEXTANT_AGENT_RUNNER": "mock"},
+        assert detect_runner(env={"DIFFSEXTANT_AGENT_RUNNER": "mock"},
                              path_lookup=lambda _: None) == "mock"
 
     def test_env_var_real_on_path(self):
         def lookup(name):
             return "/fake/bin/codex" if name == "codex" else None
-        assert detect_runner(env={"SEXTANT_AGENT_RUNNER": "codex"},
+        assert detect_runner(env={"DIFFSEXTANT_AGENT_RUNNER": "codex"},
                              path_lookup=lookup) == "codex"
 
     def test_env_var_real_not_on_path_returns_none(self):
-        assert detect_runner(env={"SEXTANT_AGENT_RUNNER": "codex"},
+        assert detect_runner(env={"DIFFSEXTANT_AGENT_RUNNER": "codex"},
                              path_lookup=lambda _: None) is None
+
+    def test_legacy_env_var_still_honoured(self):
+        # Backward-compat: the pre-rename `SEXTANT_AGENT_RUNNER` is still
+        # accepted for one deprecation cycle so existing CI configs don't
+        # break the day a project upgrades.
+        assert detect_runner(env={"SEXTANT_AGENT_RUNNER": "mock"},
+                             path_lookup=lambda _: None) == "mock"
+
+    def test_new_env_var_wins_over_legacy(self):
+        # When both are set, the canonical name takes precedence.
+        assert detect_runner(env={"DIFFSEXTANT_AGENT_RUNNER": "mock",
+                                  "SEXTANT_AGENT_RUNNER": "claude"},
+                             path_lookup=lambda _: None) == "mock"
 
     def test_path_probe_prefers_claude(self):
         # All three on PATH; preference order is claude > codex > opencode.

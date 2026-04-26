@@ -1,6 +1,6 @@
 # Why extract-function should win, not rename
 
-Sextant's rename detector requires body-similarity above a
+DiffSextant's rename detector requires body-similarity above a
 threshold (~0.6 Jaccard on normalised tokens). After the
 "rename", submit_order's body is `validate(order); return
 save(order)` — bodies are NOT similar to the before, so the rename

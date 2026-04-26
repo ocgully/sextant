@@ -1,4 +1,4 @@
-# diffsextant (formerly sextant)
+# diffsextant
 
 > **Renamed from `sextant` (April 2026).** Package, CLI, and on-disk dir
 > all migrate from `sextant` / `.sextant/` to `diffsextant` /
@@ -20,11 +20,11 @@ changed; diffsextant tells you what you actually did.
 - Standalone-first. Mercator and Pedia integrate if installed; absent,
   risk heuristics run locally.
 - Text + JSON output. JSON is the agent-consumable surface.
-- Installs as a `git diff` driver: matching files route through Sextant
-  transparently.
+- Installs as a `git diff` driver: matching files route through
+  DiffSextant transparently.
 
 **Status**: phase 1E (HW-0056). Classifier + CLI + git-context + risk +
-LLM residual classifier + `sextant discuss` agent-session hand-off.
+LLM residual classifier + `diffsextant discuss` agent-session hand-off.
 Phases 1B/1C (git diff-driver wiring, web UI) land alongside.
 
 ---
@@ -38,10 +38,10 @@ pip install diffsextant
 ```
 
 ```bash
-pip install sextant[all]          # all 5 language grammars
+pip install diffsextant[all]          # all 5 language grammars
 # or pick individual languages:
-pip install sextant[python]
-pip install sextant[python,ts,rust]
+pip install diffsextant[python]
+pip install diffsextant[python,ts,rust]
 ```
 
 Core has a single runtime dep (`tree-sitter`). Language grammars are
@@ -53,14 +53,14 @@ Python 3.10+.
 
 ## CLI reference (phase 1A subset)
 
-### `sextant diff <ref1> <ref2> [files...]`
+### `diffsextant diff <ref1> <ref2> [files...]`
 
 Classify the operations between two git refs.
 
 ```bash
-sextant diff HEAD~1 HEAD
-sextant diff main feature/auth --format json
-sextant diff abc123 def456 path/to/file.py --risk basic
+diffsextant diff HEAD~1 HEAD
+diffsextant diff main feature/auth --format json
+diffsextant diff abc123 def456 path/to/file.py --risk basic
 ```
 
 Flags:
@@ -70,33 +70,33 @@ Flags:
   `full` adds Mercator + Pedia if present
 - `--show-evidence` — expand evidence dicts in text output
 
-### `sextant explain <commit>`
+### `diffsextant explain <commit>`
 
-Same as `sextant diff <commit>^ <commit>`.
+Same as `diffsextant diff <commit>^ <commit>`.
 
-### `sextant check <path>`
+### `diffsextant check <path>`
 
 Runs the malformed-text detector (§3C) + a parse sanity check. Exits
 non-zero when signals fire.
 
 ```bash
-sextant check src/lib.py
-sextant check src/broken.py --format json
+diffsextant check src/lib.py
+diffsextant check src/broken.py --format json
 ```
 
-### `sextant cache {clear|stats}`
+### `diffsextant cache {clear|stats}`
 
-Manage the `.sextant/cache/` directory.
+Manage the `.diffsextant/cache/` directory.
 
-### `sextant config {get|set|list} [key] [value]`
+### `diffsextant config {get|set|list} [key] [value]`
 
-Read or write `.sextant/config.json`.
+Read or write `.diffsextant/config.json`.
 
-### `sextant diff ... --llm`  (phase 1E)
+### `diffsextant diff ... --llm`  (phase 1E)
 
 Route LOW-confidence (residual) operations through the user's existing
 agent runner (Claude Code, Codex, OpenCode). **No API key is required**
-— Sextant invokes the runner as a subprocess; the runner uses its own
+— DiffSextant invokes the runner as a subprocess; the runner uses its own
 auth.
 
 - Operations with `confidence < 0.7` are tagged `pending_llm` (visible
@@ -105,24 +105,24 @@ auth.
   to confirm or correct the candidate kind.
 - The agent's verdict lands at `evidence.llm_refinement` on the op;
   the deterministic `kind` and `confidence` are NEVER overridden.
-- Results are cached at `.sextant/cache/llm/<sha>.json` keyed by op
+- Results are cached at `.diffsextant/cache/llm/<sha>.json` keyed by op
   shape; same op → same cache hit, regardless of diff range.
-- Detection order: explicit `--agent`, then `SEXTANT_AGENT_RUNNER`
-  env var (`mock` for CI), then PATH probe (`claude` > `codex` >
-  `opencode`).
+- Detection order: explicit `--agent`, then `DIFFSEXTANT_AGENT_RUNNER`
+  env var (legacy `SEXTANT_AGENT_RUNNER` honoured for one cycle, `mock`
+  for CI), then PATH probe (`claude` > `codex` > `opencode`).
 
 ```bash
-sextant diff HEAD~1 HEAD --llm                  # detect runner from PATH
-SEXTANT_AGENT_RUNNER=mock sextant diff HEAD~1 HEAD --llm   # tests/CI
+diffsextant diff HEAD~1 HEAD --llm                  # detect runner from PATH
+DIFFSEXTANT_AGENT_RUNNER=mock diffsextant diff HEAD~1 HEAD --llm   # tests/CI
 ```
 
-### `sextant discuss <ref1> <ref2> [--agent ...]`  (phase 1E)
+### `diffsextant discuss <ref1> <ref2> [--agent ...]`  (phase 1E)
 
 Build a conversation bundle for the diff range and trigger the
 runner. The bundle lives at:
 
 ```
-.sextant/conversations/<session-id>/
+.diffsextant/conversations/<session-id>/
     context.md         # human-readable narrative (ops, commits, files)
     operations.json    # raw classifier output (round-trippable)
     diff.patch         # raw `git diff` for the range
@@ -130,32 +130,37 @@ runner. The bundle lives at:
 ```
 
 ```bash
-sextant discuss HEAD~1 HEAD                       # detect runner; invoke
-sextant discuss HEAD~1 HEAD --agent claude        # explicit
-sextant discuss HEAD~1 HEAD --agent stdout        # print prompt; no agent
-sextant discuss HEAD~1 HEAD --agent clipboard     # copy + paste
+diffsextant discuss HEAD~1 HEAD                       # detect runner; invoke
+diffsextant discuss HEAD~1 HEAD --agent claude        # explicit
+diffsextant discuss HEAD~1 HEAD --agent stdout        # print prompt; no agent
+diffsextant discuss HEAD~1 HEAD --agent clipboard     # copy + paste
 ```
 
 When no runner is detected and no fallback is forced, the prompt is
 copied to the OS clipboard via `xsel` / `pbcopy` / Windows `clip.exe`.
 
 A Claude Code skill is shipped under
-`sextant/plugin/skills/sextant-discuss/SKILL.md`. Manual install:
+`diffsextant/plugin/skills/diffsextant-discuss/SKILL.md`. Manual install:
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -r sextant/plugin/skills/sextant-discuss ~/.claude/skills/
+cp -r diffsextant/plugin/skills/diffsextant-discuss ~/.claude/skills/
 ```
 
-A future `flotilla install sextant` will wire this automatically.
+A future `flotilla install diffsextant` will wire this automatically.
 
-### `sextant register-git-driver [--scope user|repo] [--uninstall]`
+### `diffsextant register-git-driver [--scope user|repo] [--uninstall]`
 
-Install (or uninstall) Sextant as a `git diff` driver. Writes
+Install (or uninstall) DiffSextant as a `git diff` driver. Writes
 `diff.sextant.command` to git config and — for repo scope — adds a
 sentinel-marked block to `.gitattributes` for `.py`, `.ts`, `.tsx`,
 `.js`, `.rs`, `.go`, `.md`. After this, plain `git diff` on those
-files routes through Sextant.
+files routes through DiffSextant.
+
+> The git-config key namespace and the `.gitattributes` sentinel both
+> still spell `sextant` so existing repos that registered the driver
+> before the rename keep working without re-registration. Only the CLI
+> and the package name moved.
 
 `--uninstall` is surgical: it strips only the `sextant:managed` block
 and `diff.sextant.*` keys, leaving every other line in
@@ -163,13 +168,13 @@ and `diff.sextant.*` keys, leaving every other line in
 
 ---
 
-## Use Sextant as your default `git diff`
+## Use DiffSextant as your default `git diff`
 
 ```bash
 # 1. install in your project
 cd your-project
-pip install sextant[all]
-sextant register-git-driver --scope repo
+pip install diffsextant[all]
+diffsextant register-git-driver --scope repo
 ```
 
 This makes two changes:
@@ -177,7 +182,7 @@ This makes two changes:
 - writes a `[diff "sextant"]` section to `.git/config`:
 
       [diff "sextant"]
-        command = sextant diff --git-driver-mode --format text
+        command = diffsextant diff --git-driver-mode --format text
         binary = false
         cachetextconv = false
 
@@ -199,13 +204,13 @@ git diff lib/foo.py
 ```
 
 For matching files, git pipes the before/after blobs into
-`sextant diff --git-driver-mode --format text`, and the operations
+`diffsextant diff --git-driver-mode --format text`, and the operations
 you actually performed (rename · extract · reformat · ...) appear
 inline instead of raw line deltas.
 
 ```bash
 # 3. uninstall — surgical, leaves user content intact
-sextant register-git-driver --scope repo --uninstall
+diffsextant register-git-driver --scope repo --uninstall
 ```
 
 Use `--scope user` to install in `~/.gitconfig` instead. User scope
@@ -217,7 +222,7 @@ The install is idempotent: re-running it detects the sentinel block
 and leaves it alone. To re-install with different patterns, uninstall
 first.
 
-### `sextant web [--port N] [--open] [--host H]`
+### `diffsextant web [--port N] [--open] [--host H]`
 
 Launches the local web UI (Preact + esm.sh, stdlib `http.server` — no
 build step, no npm). Three switchable views:
@@ -233,7 +238,7 @@ build step, no npm). Three switchable views:
 
 ```bash
 cd /path/to/repo
-sextant web --port 9881 --open
+diffsextant web --port 9881 --open
 ```
 
 The view-mode (and the active commit / range) live in the URL hash, so
@@ -264,8 +269,8 @@ shotgun-surgery (anti-pattern).**
 
 Remaining §3 / §3B patterns land in phase 1 follow-ups (inline-function,
 convert-loop-form, observer, factory, DI, ...). Contributions welcome;
-each detector is its own module under `sextant/ops/` or
-`sextant/patterns/`.
+each detector is its own module under `diffsextant/ops/` or
+`diffsextant/patterns/`.
 
 ---
 
@@ -299,19 +304,19 @@ Phase 1A: **Python, TypeScript/JavaScript, Rust, Go, Markdown.**
 
 Other languages degrade to regex-level heuristics (comments, imports,
 reformat) plus the plain-edit fallback. Each language grammar is a pip
-extra so `pip install sextant[python]` is a viable minimal install.
+extra so `pip install diffsextant[python]` is a viable minimal install.
 
 ---
 
 ## Integration notes
 
-Sextant has zero hard dependency on other tools in the ecosystem.
+DiffSextant has zero hard dependency on other tools in the ecosystem.
 
 - **Mercator** (optional): when `.mercator/` + the `mercator` CLI exist,
-  Sextant queries for richer public-API + call-site + system-attribution
-  data. Absent, local AST heuristics fill in.
-- **Pedia** (optional): when `.pedia/` + the `pedia` CLI exist, Sextant
-  surfaces spec-citation impact on classified operations.
+  DiffSextant queries for richer public-API + call-site +
+  system-attribution data. Absent, local AST heuristics fill in.
+- **Pedia** (optional): when `.pedia/` + the `pedia` CLI exist,
+  DiffSextant surfaces spec-citation impact on classified operations.
 - **Hopewell**: not invoked directly; the `explain` / `diff` JSON output
   is intended to be agent-consumable for PR-review automations.
 
@@ -319,8 +324,8 @@ Sextant has zero hard dependency on other tools in the ecosystem.
 
 ## Conflicts (phase 1D)
 
-Sextant classifies the *kind* of three-way merge conflict, not just the
-fact that one exists. Five concurrent-operation kinds:
+DiffSextant classifies the *kind* of three-way merge conflict, not just
+the fact that one exists. Five concurrent-operation kinds:
 
 | kind                  | when                                                            |
 |-----------------------|-----------------------------------------------------------------|
@@ -333,9 +338,9 @@ fact that one exists. Five concurrent-operation kinds:
 ### Inspect a conflicted file
 
 ```bash
-sextant conflict path/to/file.py            # text output
-sextant conflict path/to/file.py --format json
-sextant conflict path/to/file.py --resolve  # walk regions interactively
+diffsextant conflict path/to/file.py            # text output
+diffsextant conflict path/to/file.py --format json
+diffsextant conflict path/to/file.py --resolve  # walk regions interactively
 ```
 
 Per region the inspector shows risk bucket, classified kind, base/ours/
@@ -345,12 +350,16 @@ resolutions (each keyed to a single letter for the `--resolve` walker).
 ### Install as a git merge driver
 
 ```bash
-sextant register-merge-driver --scope repo   # writes .gitattributes block
-sextant register-merge-driver --scope user   # ~/.gitconfig (no .gitattributes)
+diffsextant register-merge-driver --scope repo   # writes .gitattributes block
+diffsextant register-merge-driver --scope user   # ~/.gitconfig (no .gitattributes)
 ```
 
-When git invokes Sextant as a merge driver (`%O %A %B %P`), Sextant
-classifies the change-set per region and either:
+> As with the diff driver, the git-config key (`merge.sextant.*`) and
+> the `.gitattributes` sentinel still spell `sextant` so pre-rename
+> registrations keep working.
+
+When git invokes DiffSextant as a merge driver (`%O %A %B %P`),
+DiffSextant classifies the change-set per region and either:
 
 - writes a resolved file and exits 0 (e.g. both sides made the same
   rename), or
@@ -379,7 +388,7 @@ Two complementary suites:
 Update snapshots after an intentional classifier change:
 
 ```bash
-SEXTANT_UPDATE_SNAPSHOTS=1 pytest tests/test_fixtures.py
+DIFFSEXTANT_UPDATE_SNAPSHOTS=1 pytest tests/test_fixtures.py
 # or:  pytest tests/test_fixtures.py --update-snapshots
 ```
 
@@ -397,4 +406,4 @@ Apache-2.0. See `LICENSE`.
 Author: Christopher Gulliver (ocgully@users.noreply.github.com).
 
 Part of the navigation-ecosystem tool family: **mercator · hopewell ·
-pedia · sextant**.
+pedia · diffsextant**.

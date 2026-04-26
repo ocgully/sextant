@@ -6,4 +6,5 @@ patterned after a real Sextant commit during phase 1A. The shape
 the most common refactor in any codebase.
 
 Expected: `rename-symbol` operation, high confidence.
-Source: synthetic but representative of /c/git/sextant commits.
+Source: synthetic but representative of pre-rename `sextant` repo commits
+(now `diffsextant`).

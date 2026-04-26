@@ -1,4 +1,4 @@
-// Timeline view (§6.4 of the Sextant plan).
+// Timeline view (§6.4 of the DiffSextant plan).
 //
 // Horizontal track of commits. Each commit card shows:
 //   - short SHA + subject + author + ISO timestamp

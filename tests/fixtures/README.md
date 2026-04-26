@@ -1,8 +1,8 @@
-# Sextant fixture corpus
+# DiffSextant fixture corpus
 
 Snapshot-based regression tests. Every directory under
 `<category>/<name>/` is one fixture: a before/after pair plus a golden
-`expected.json` that pins Sextant's classifier output.
+`expected.json` that pins DiffSextant's classifier output.
 
 ## Layout
 
@@ -12,8 +12,13 @@ tests/fixtures/
 ├── multi-op/      interleaved diffs (>= 2 operations expected)
 ├── ambiguous/     two classifiers could plausibly fire — snapshot pins which wins
 ├── negative/      NOT-X cases (reformat must NOT fire when tokens changed, etc.)
-└── real-world/    sampled from real repos (sextant / agentfactory / hopewell)
+└── real-world/    sampled from real repos (diffsextant / agentfactory / hopewell)
 ```
+
+Some real-world fixtures predate the package rename and intentionally
+keep the old `sextant/` paths and "Sextant" mentions in their captured
+commit messages — those are historical artefacts of the source commits
+and stay untouched on purpose.
 
 Each fixture contains:
 
@@ -32,7 +37,7 @@ Each fixture contains:
 ## How tests run
 
 `tests/test_fixtures.py` discovers every fixture, materialises `before/`
-and `after/` as two commits in a tmp git repo, runs Sextant's
+and `after/` as two commits in a tmp git repo, runs DiffSextant's
 programmatic classifier (`classify_diff`), normalises the output (drops
 `cwd`-dependent fields and unstable risk signals), and compares to
 `expected.json`. Drift fails the test with a unified diff.
@@ -46,7 +51,8 @@ After an intentional classifier change:
 pytest tests/test_fixtures.py --update-snapshots
 
 # or env var
-SEXTANT_UPDATE_SNAPSHOTS=1 pytest tests/test_fixtures.py
+DIFFSEXTANT_UPDATE_SNAPSHOTS=1 pytest tests/test_fixtures.py
+# legacy `SEXTANT_UPDATE_SNAPSHOTS=1` still accepted for one cycle
 ```
 
 This rewrites every fixture's `expected.json` from current output. The
@@ -59,7 +65,7 @@ result, sanity-check it, then commit.
 2. Write `before/<file>` and `after/<file>` (keep each < 100 lines)
 3. Optionally add `commit-message.txt` for git-context priors
 4. Write `README.md` explaining the case (3-5 lines)
-5. Run `SEXTANT_UPDATE_SNAPSHOTS=1 pytest tests/test_fixtures.py -k <name>` to
+5. Run `DIFFSEXTANT_UPDATE_SNAPSHOTS=1 pytest tests/test_fixtures.py -k <name>` to
    bootstrap `expected.json`
 6. Eyeball `expected.json` and verify it matches your intent
 7. For `ambiguous/` fixtures: add `decision-rationale.md` explaining why the
@@ -67,7 +73,7 @@ result, sanity-check it, then commit.
 
 ## Why snapshot tests
 
-Sextant has 15+ classifiers that interact via priority + confidence
+DiffSextant has 15+ classifiers that interact via priority + confidence
 gating. Per-classifier unit tests (in `test_ops.py`) confirm each
 classifier's positive cases. Snapshot tests confirm the **composed**
 behavior — what actually comes out the other end of `classify_diff` for
@@ -85,5 +91,5 @@ A snapshot failure is either:
 
 The ambiguous fixtures are the BACKBONE: each one pins which of two
 plausible classifiers should fire when both could. Silent reclassification
-regressions are the highest-impact failure mode for a tool like Sextant,
-and these fixtures catch them.
+regressions are the highest-impact failure mode for a tool like
+DiffSextant, and these fixtures catch them.

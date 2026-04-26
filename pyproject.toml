@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "diffsextant"
 version = "0.6.0"
-description = "Semantic-operation diff classifier (formerly sextant). Reads diffs as operations (rename, extract, move, reformat, ...), not line deltas. Phase 1B-1E: git diff/merge driver, web GUI, conflict tooling, LLM residual + agent-session integration (no API key)."
+description = "Semantic-operation diff classifier. Reads diffs as operations (rename, extract, move, reformat, ...), not line deltas. Phase 1B-1E: git diff/merge driver, web GUI, conflict tooling, LLM residual + agent-session integration (no API key)."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
@@ -47,9 +47,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ocgully/sextant"
-Repository = "https://github.com/ocgully/sextant"
-Issues = "https://github.com/ocgully/sextant/issues"
+Homepage = "https://github.com/ocgully/diffsextant"
+Repository = "https://github.com/ocgully/diffsextant"
+Issues = "https://github.com/ocgully/diffsextant/issues"
 
 [project.scripts]
 # New primary entry point.

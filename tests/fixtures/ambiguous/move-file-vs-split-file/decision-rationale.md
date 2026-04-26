@@ -6,7 +6,7 @@ has a body matching the original lib.py — each contains only HALF
 of it. The move-file similarity check (>0.9 confidence) correctly
 declines.
 
-Sextant does not yet ship a `split-file` classifier (it's listed
+DiffSextant does not yet ship a `split-file` classifier (it's listed
 in OperationKind but no detector emits it). Result: lib.py shows
 up as a deletion (no after-body), and alpha.py + beta.py show up
 as additions, all categorised as `plain-edit`.

@@ -38,7 +38,7 @@ def suggest_for_region(region: ConflictRegion) -> List[Suggestion]:
     else:
         sugs.append(Suggestion(
             key="m", label="Manual edit",
-            detail="Sextant could not classify; review the region manually.",
+            detail="DiffSextant could not classify; review the region manually.",
         ))
         if region.base is not None:
             sugs.append(Suggestion(

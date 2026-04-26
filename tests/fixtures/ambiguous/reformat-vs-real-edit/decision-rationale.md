@@ -1,6 +1,6 @@
 # Why reformat must NOT fire here
 
-The reformat detector (sextant.ops.reformat.ReformatClassifier)
+The reformat detector (diffsextant.ops.reformat.ReformatClassifier)
 requires the token sequence (identifiers + literals + numbers) to
 be IDENTICAL before/after. Adding `+ 1` introduces a new numeric
 literal `1`, breaking that invariant.

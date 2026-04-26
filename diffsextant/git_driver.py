@@ -1,8 +1,20 @@
-"""Git diff-driver registration for sextant.
+"""Git diff-driver registration for diffsextant.
 
-Phase 1B (HW-0056). Installs / uninstalls sextant as a git diff driver
-in either user (~/.gitconfig) or repo (.git/config + .gitattributes)
-scope, using sentinel-marked blocks so uninstall is surgical.
+Phase 1B (HW-0056). Installs / uninstalls diffsextant as a git diff
+driver in either user (~/.gitconfig) or repo (.git/config +
+.gitattributes) scope, using sentinel-marked blocks so uninstall is
+surgical.
+
+## Backward compat — load-bearing legacy names
+
+The git-config namespace (`diff.sextant.*`) and the `.gitattributes`
+sentinel (`# >>> sextant:managed ...`) intentionally still spell
+`sextant`, NOT `diffsextant`. They are part of the public install
+contract: any repo whose contributors registered the driver before the
+April 2026 rename has these tokens checked into `.gitattributes` and
+written into per-user `~/.gitconfig`. Renaming them would silently
+disable the driver in those repos. The CLI surface is what moved; the
+git wiring stays.
 
 ## Architecture
 
@@ -41,7 +53,7 @@ positional arguments:
     cmd  path  old-file  old-hex  old-mode  new-file  new-hex  new-mode
 
 `old-file` / `new-file` are temp-file paths to the blob contents on disk.
-Sextant's diff command was originally written to take ref1/ref2 (git
+DiffSextant's diff command was originally written to take ref1/ref2 (git
 revs); the `--git-driver-mode` flag rebinds that command's argv shape to
 accept the 7 positional driver args instead, classify the on-disk
 before/after pair, and render to stdout.
@@ -51,7 +63,7 @@ before/after pair, and render to stdout.
 The argparse subcommand was scaffolded in phase 1A; in phase 1B `cli.py`
 delegates to this module:
 
-    # in sextant/cli.py
+    # in diffsextant/cli.py
     def cmd_register_git_driver(args) -> int:
         from diffsextant.git_driver import install, uninstall
         return uninstall(scope=args.scope) if args.uninstall \
@@ -59,10 +71,10 @@ delegates to this module:
 
     # parser
     rg = sub.add_parser("register-git-driver",
-                        help="install sextant as a git diff driver")
+                        help="install diffsextant as a git diff driver")
     rg.add_argument("--scope", choices=["user", "repo"], default="repo")
     rg.add_argument("--uninstall", action="store_true",
-                    help="remove a previously-installed sextant driver")
+                    help="remove a previously-installed diffsextant driver")
     rg.set_defaults(func=cmd_register_git_driver)
 
 And `diffsextant diff` gains the protocol bridge:
@@ -236,7 +248,7 @@ def install(*, scope: str = "repo",
             cwd: Optional[Path] = None,
             patterns: Tuple[str, ...] = DEFAULT_ATTR_PATTERNS,
             stream=sys.stdout) -> int:
-    """Install sextant as a git diff driver. Idempotent.
+    """Install diffsextant as a git diff driver. Idempotent.
 
     Returns the CLI-style exit code (0 = OK, non-zero = error).
     """
@@ -280,7 +292,7 @@ def install(*, scope: str = "repo",
             stream.write(f"wrote sextant:managed block to {attrs_path}\n")
 
     stream.write(
-        "git diff on matching files now routes through sextant.\n"
+        "git diff on matching files now routes through diffsextant.\n"
     )
     return 0
 
@@ -372,7 +384,7 @@ def render_driver_invocation(inv: GitDriverInvocation,
                              stream=sys.stdout) -> int:
     """Classify the on-disk old/new pair git handed us, then render.
 
-    Reuses the standard sextant per-file classifier pipeline. Unlike
+    Reuses the standard diffsextant per-file classifier pipeline. Unlike
     `diffsextant diff <ref1> <ref2>`, there's no git range here — git has
     already materialised both blobs as temp files. We build a single
     `FileChange` from those bytes and run the same pipeline used in

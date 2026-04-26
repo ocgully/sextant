@@ -1,4 +1,4 @@
-"""Smoke tests for `sextant web` (phase 1C).
+"""Smoke tests for `diffsextant web` (phase 1C).
 
 Spins up the stdlib http.server in a thread against a tmp git repo and
 hits each endpoint. Verifies:
@@ -76,7 +76,7 @@ def _build_two_commit_repo(tmp_path: Path) -> Path:
 
 
 def _serve(repo: Path, port: int) -> Tuple[Any, threading.Thread]:
-    server = web_server._ThreadingHTTPServer(("127.0.0.1", port), web_server.SextantWebHandler)
+    server = web_server._ThreadingHTTPServer(("127.0.0.1", port), web_server.DiffSextantWebHandler)
     server.project_root = repo  # type: ignore[attr-defined]
     t = threading.Thread(target=server.serve_forever, daemon=True)
     t.start()
@@ -131,7 +131,7 @@ def test_index_serves_html(served_repo):
     assert code == 200
     assert "text/html" in ctype
     text = body.decode("utf-8")
-    assert "<title>Sextant</title>" in text
+    assert "<title>DiffSextant</title>" in text
     assert 'data-mode="ops"' in text
     assert 'data-mode="classic"' in text
     assert 'data-mode="timeline"' in text
@@ -157,7 +157,9 @@ def test_meta_endpoint(served_repo):
     code, payload, _ = _get_json(port, "/api/meta")
     assert code == 200
     assert payload["project_root"]
-    assert payload["sextant_version"]
+    assert payload["diffsextant_version"]
+    # legacy alias kept one cycle
+    assert payload["sextant_version"] == payload["diffsextant_version"]
     assert payload["head"]
 
 

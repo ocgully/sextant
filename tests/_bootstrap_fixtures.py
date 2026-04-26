@@ -7,7 +7,7 @@ Run from the repo root:
 It writes every fixture's `before/`, `after/`, README.md, and (where
 applicable) commit-message.txt + decision-rationale.md to disk under
 tests/fixtures/. expected.json is left for the snapshot runner to fill
-on first run via SEXTANT_UPDATE_SNAPSHOTS=1.
+on first run via DIFFSEXTANT_UPDATE_SNAPSHOTS=1.
 
 This script is part of the test corpus (it documents how the fixtures
 were built) but it's not invoked by pytest.
@@ -982,7 +982,7 @@ def multi_ts_rename_class_and_update_callers():
             importing caller. Cross-file consistency is exercised here.
 
             Expected: at least one `rename-symbol` (in user.ts), and the caller
-            file produces a rename or plain-edit per Sextant's per-file
+            file produces a rename or plain-edit per DiffSextant's per-file
             classifier loop.
         """,
     )
@@ -1066,7 +1066,7 @@ def amb_rename_vs_signature_change():
         decision_rationale="""
             # Why this fixture's expected output is what it is
 
-            When name AND signature both change, Sextant currently emits
+            When name AND signature both change, DiffSextant currently emits
             BOTH a `rename-symbol` and a `change-signature` op (two ops). The
             rename detector is structural-position-based (same function order,
             different name) so it still fires. The change-signature detector
@@ -1118,7 +1118,7 @@ def amb_extract_vs_rename():
         decision_rationale="""
             # Why extract-function should win, not rename
 
-            Sextant's rename detector requires body-similarity above a
+            DiffSextant's rename detector requires body-similarity above a
             threshold (~0.6 Jaccard on normalised tokens). After the
             "rename", submit_order's body is `validate(order); return
             save(order)` — bodies are NOT similar to the before, so the rename
@@ -1160,7 +1160,7 @@ def amb_reformat_vs_real_edit():
         decision_rationale="""
             # Why reformat must NOT fire here
 
-            The reformat detector (sextant.ops.reformat.ReformatClassifier)
+            The reformat detector (diffsextant.ops.reformat.ReformatClassifier)
             requires the token sequence (identifiers + literals + numbers) to
             be IDENTICAL before/after. Adding `+ 1` introduces a new numeric
             literal `1`, breaking that invariant.
@@ -1205,7 +1205,7 @@ def amb_comment_only_vs_docstring_only():
         decision_rationale="""
             # Which wins: comment-only or docstring-only
 
-            Sextant has two distinct classifiers — `docstring-only` is
+            DiffSextant has two distinct classifiers — `docstring-only` is
             language-specific (Python triple-quoted strings as the FIRST
             statement of a function/class/module). `comment-only` is more
             general (#-style comments).
@@ -1253,7 +1253,7 @@ def amb_move_file_vs_split_file():
             twice (or once with low confidence) because path-pairing is
             ambiguous.
 
-            Expected: see decision-rationale.md. Sextant currently lacks a
+            Expected: see decision-rationale.md. DiffSextant currently lacks a
             split-file classifier, so the diff likely surfaces as 1 deletion +
             2 additions = three plain-edit / move-file / add ops.
         """,
@@ -1266,7 +1266,7 @@ def amb_move_file_vs_split_file():
             of it. The move-file similarity check (>0.9 confidence) correctly
             declines.
 
-            Sextant does not yet ship a `split-file` classifier (it's listed
+            DiffSextant does not yet ship a `split-file` classifier (it's listed
             in OperationKind but no detector emits it). Result: lib.py shows
             up as a deletion (no after-body), and alpha.py + beta.py show up
             as additions, all categorised as `plain-edit`.
@@ -1409,7 +1409,9 @@ def neg_empty_file():
 
 
 # ===========================================================================
-# REAL-WORLD (3) — sampled from this repo (sextant) and AgentFactory
+# REAL-WORLD (3) — sampled from this repo (diffsextant; historical
+# commits captured under the pre-rename `sextant/` package layout) and
+# AgentFactory
 # ===========================================================================
 
 

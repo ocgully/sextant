@@ -1,4 +1,4 @@
-// Sextant web UI — Preact + esm.sh, zero build.
+// DiffSextant web UI — Preact + esm.sh, zero build.
 //
 // Three views share one diff payload (fetched once per range and reused):
 //   - Operations  (default)        #/  or #/commit/<sha>
@@ -157,8 +157,9 @@ function App() {
       root.textContent = parts.slice(-2).join("/");
       root.title = meta.project_root;
     }
-    const v = document.getElementById("sextant-version");
-    if (v && meta.sextant_version) v.textContent = "v" + meta.sextant_version;
+    const v = document.getElementById("diffsextant-version");
+    const ver = meta.diffsextant_version || meta.sextant_version;
+    if (v && ver) v.textContent = "v" + ver;
   }, [meta]);
 
   useEffect(() => {
